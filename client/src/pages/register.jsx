@@ -1,5 +1,4 @@
-import RegisterForm from "../components/register-form";
-import { ACCESS_TOKEN } from "../constants";
+import RegisterForm from "../components/auth/register-form";
 
 function Register() {
 

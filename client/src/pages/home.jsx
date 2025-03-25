@@ -1,7 +1,7 @@
 // HomePage.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api';
+import request from '../pre-request';
 
 const HomePage = () => {
   const [roomCode, setRoomCode] = useState('');
@@ -17,7 +17,7 @@ const HomePage = () => {
     }
 
     try {
-      const response = await api.get(`/accounts/get-room/${roomCode}/`);
+      const response = await request.get(`/room/get/${roomCode}/`);
       navigate(`/room/`, { state: { room: response.data } });
     } catch (err) {
       setError('Invalid room code or unable to join.');
@@ -27,7 +27,7 @@ const HomePage = () => {
   // Handle Create Room
   const handleCreateRoom = async () => {
     try {
-      const response = await api.post('/accounts/create-room/');
+      const response = await request.post('/room/create/');
       navigate(`/room/`, { state: { room: response.data } });
     } catch (err) {
       setError('Failed to create a room.');

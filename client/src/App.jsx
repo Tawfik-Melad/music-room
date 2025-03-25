@@ -5,7 +5,7 @@ import Home  from './pages/home'
 import Login from './pages/login'
 import Register from './pages/register'
 import Room from './pages/room'
-import ProtectedRoute from './components/protected-route'
+import ProtectedRoute from './components/common/protected-route'
 
 function Logout() {
   localStorage.clear()

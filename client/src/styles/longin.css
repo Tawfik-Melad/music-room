@@ -1,0 +1,75 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(145deg, #1e293b, #0f172a);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Form Container */
+.login-form {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Form Group */
+.form-group {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+/* Input Styles */
+.form-input {
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.form-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Button Styles */
+.login-button {
+    background: linear-gradient(145deg, #1db954, #1aa34a);
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.login-button:hover {
+    background: linear-gradient(145deg, #1aa34a, #1db954);
+}
+
+/* Error Message */
+.error-message {
+    color: #ff4d4d;
+    margin-top: 0.5rem;
+    font-weight: bold;
+    text-align: center;
+}

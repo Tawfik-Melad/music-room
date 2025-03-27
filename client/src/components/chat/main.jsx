@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import request from '../../pre-request';
 
-const Chat = ({room}) => {
+const Chat = ({room , user}) => {
 
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -28,7 +28,7 @@ const Chat = ({room}) => {
   // Initialize WebSocket
   useEffect(() => {
     if (!room) return;
-    const ws = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${room.code}/`);
+    const ws = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${room.code}/?user_id=${user.id}`);
 
     ws.onopen = () => {
       console.log('✅ Connected to WebSocket');
@@ -51,7 +51,7 @@ const Chat = ({room}) => {
     };
 
     ws.onclose = () => {
-      console.log('❌ WebSocket Disconnected');
+      
       setIsConnected(false);
     };
 

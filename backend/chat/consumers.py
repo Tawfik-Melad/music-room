@@ -1,11 +1,32 @@
+import os
+import django
+
+# Point to your project's settings module
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
+django.setup()
+
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from django.contrib.auth.models import User
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         # Extract room name from URL
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f"chat_{self.room_name}"
+        
+        query_string = self.scope['query_string'].decode()
+        user_id = query_string.split("user_id=")[-1]
+        
+        try:
+            self.user = await self.get_user(user_id)
+        except User.DoesNotExist:
+            print("❌ User not found")
+            await self.close()
+            return
+        
+        print(f"🔗 Connected to room: {user_id}")
 
         # Add user to the room group
         await self.channel_layer.group_add(
@@ -14,7 +35,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
         await self.accept()
-        print(f"✅ Connected to room: {self.room_name}")
 
     async def disconnect(self, close_code):
         # Remove user from the group
@@ -22,7 +42,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-        print(f"❌ Disconnected from room: {self.room_name}")
 
     async def receive(self, text_data):
         # Handle incoming messages
@@ -43,3 +62,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'message': event['message']
         }))
+        
+    async def get_user(self, user_id):
+        return await User.objects.aget(id=user_id)

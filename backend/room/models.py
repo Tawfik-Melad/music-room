@@ -29,3 +29,5 @@ class RoomMember(models.Model):
     connected = models.BooleanField(default=False)
     joined_at = models.DateTimeField(auto_now_add=True)
     
+    def __str__(self):
+        return f"{self.user.username} in {self.room.code}"

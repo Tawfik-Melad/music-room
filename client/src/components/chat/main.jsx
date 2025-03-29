@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 import request from '../../pre-request';
+import '../../styles/chat.css';
 
-const Chat = ({room}) => {
+const Chat = ({room , user}) => {
 
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -28,7 +29,7 @@ const Chat = ({room}) => {
   // Initialize WebSocket
   useEffect(() => {
     if (!room) return;
-    const ws = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${room.code}/`);
+    const ws = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${room.code}/?user_id=${user.id}`);
 
     ws.onopen = () => {
       console.log('✅ Connected to WebSocket');
@@ -51,7 +52,7 @@ const Chat = ({room}) => {
     };
 
     ws.onclose = () => {
-      console.log('❌ WebSocket Disconnected');
+      
       setIsConnected(false);
     };
 
@@ -95,74 +96,62 @@ const Chat = ({room}) => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-600 to-blue-500 text-white p-4">
-      <div className="w-full max-w-2xl bg-white shadow-lg rounded-2xl p-6 text-gray-900">
-        
+    <div className="chat-container">
+      <div className="chat-header">
         {/* Room Info */}
-        <div className="mb-4 text-center">
-          <h2 className="text-3xl font-extrabold mb-2">🎤 {room.code}</h2>
-          <p className="text-lg font-medium">👑 Host: {room.host}</p>
-          <p className="text-sm">🧑‍🤝‍🧑 {room.members?.length || 0} Members</p>
+        <div>
+          <h2>🎤 {room.code}</h2>
+          <p>👑 Host: {room.host}</p>
+          <p>🧑‍🤝‍🧑 {room.members?.length || 0} Members</p>
         </div>
 
         {/* Connection Status */}
-        <div className="mb-2 text-center">
-          {isConnected ? (
-            <span className="text-green-500">🟢 Connected</span>
-          ) : (
-            <span className="text-red-500">🔴 Disconnected</span>
-          )}
+        <div className={`connection-status ${isConnected ? 'connected' : 'disconnected'}`}>
+          {isConnected ? '🟢 Connected' : '🔴 Disconnected'}
         </div>
+      </div>
 
-        {/* Chat Messages */}
-        <div className="h-80 overflow-y-auto p-4 border rounded-xl bg-gray-100">
-          {messages.length === 0 ? (
-            <p className="text-gray-500 text-center">No messages yet. Say hi! 👋</p>
-          ) : (
-            messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`flex flex-col ${
-                  msg.sender === "You" ? "items-end" : "items-start"
-                } mb-3`}
-              >
-                <span className="text-xs text-gray-500">
-                  {msg.sender} — {formatTimestamp(msg.timestamp)}
-                </span>
-                <div
-                  className={`px-4 py-2 rounded-lg shadow-md ${
-                    msg.sender === "You"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-300 text-gray-900"
-                  }`}
-                >
-                  {msg.content}
-                </div>
-                <span className="text-xs text-gray-400">
-                  {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </span>
+      {/* Chat Messages */}
+      <div className="messages-container">
+        {messages.length === 0 ? (
+          <p className="message received">No messages yet. Say hi! 👋</p>
+        ) : (
+          messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`message ${msg.sender === "You" ? "sent" : "received"}`}
+            >
+              <span className="message-sender">
+                {msg.sender}
+              </span>
+              <div className="message-content">
+                {msg.content}
               </div>
-            ))
-          )}
-          <div ref={messageEndRef} />
-        </div>
+              <span className="message-time">
+                {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </span>
+            </div>
+          ))
+        )}
+        <div ref={messageEndRef} />
+      </div>
 
-        {/* Message Input */}
-        <div className="flex mt-4">
-          <input
-            type="text"
-            className="flex-1 px-4 py-2 rounded-l-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            placeholder="Type your message..."
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-          />
-          <button
-            onClick={sendMessage}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-r-full transition-all duration-200"
-          >
-            🚀 Send
-          </button>
-        </div>
+      {/* Message Input */}
+      <div className="input-container">
+        <input
+          type="text"
+          className="message-input"
+          placeholder="Type your message..."
+          value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+        />
+        <button
+          onClick={sendMessage}
+          className="send-button"
+        >
+          🚀 Send
+        </button>
       </div>
     </div>
   );

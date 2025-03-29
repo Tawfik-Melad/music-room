@@ -26,9 +26,9 @@ const LoginForm = () => {
     };
 
     return (
-        <form className="login-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-                <label className="form-label">Username:</label>
+        <form  onSubmit={handleSubmit}>
+            <div >
+                <label >Username:</label>
                 <input
                     type="text"
                     className="form-input"
@@ -37,8 +37,8 @@ const LoginForm = () => {
                     required
                 />
             </div>
-            <div className="form-group">
-                <label className="form-label">Password:</label>
+            <div >
+                <label >Password:</label>
                 <input
                     type="password"
                     className="form-input"
@@ -47,8 +47,8 @@ const LoginForm = () => {
                     required
                 />
             </div>
-            {error && <p className="error-message">{error}</p>}
-            <button className="login-button" type="submit">Login</button>
+            {error && <p >{error}</p>}
+            <button type="submit">Login</button>
         </form>
     );
 };

@@ -40,58 +40,54 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="register-container">
+    <div >
       <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <h2 className="register-title">Register</h2>
-        {error && <p className="error-message">{error}</p>}
+        <h2 >Register</h2>
+        {error && <p >{error}</p>}
 
-        <div className="register-group">
-          <label className="register-label">Username</label>
+        <div >
+          <label >Username</label>
           <input
             type="text"
             placeholder="Enter your username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="register-input"
             required
           />
         </div>
 
-        <div className="register-group">
-          <label className="register-label">Email</label>
+        <div >
+          <label >Email</label>
           <input
             type="email"
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="register-input"
             required
           />
         </div>
 
-        <div className="register-group">
-          <label className="register-label">Password</label>
+        <div >
+          <label>Password</label>
           <input
             type="password"
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="register-input"
             required
           />
         </div>
 
-        <div className="register-group">
-          <label className="register-label">Profile Picture</label>
+        <div >
+          <label >Profile Picture</label>
           <input
             type="file"
             accept="image/*"
             onChange={(e) => setProfile_picture(e.target.files[0])}
-            className="file-input"
           />
         </div>
 
-        <button type="submit" className="register-button">
+        <button type="submit" >
           Register
         </button>
       </form>

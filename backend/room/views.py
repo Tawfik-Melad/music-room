@@ -2,8 +2,17 @@ from rest_framework import generics ,status , serializers
 from django.contrib.auth.models import User
 from rest_framework.permissions import AllowAny , IsAuthenticated
 from rest_framework.response import Response
-from .serializers import RoomSerializer
-from room.models import Room 
+from .serializers import RoomSerializer , RoomMemberSerializer
+from django.shortcuts import get_object_or_404
+from room.models import Room , RoomMember
+
+from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from django.http import Http404
+from .models import RoomMember
+from .serializers import RoomMemberSerializer
+
 # Create your views here.
 
 # Create Room View
@@ -34,3 +43,28 @@ class RetrieveRoomView(generics.GenericAPIView):
             return Response({'error': 'Room not found.'}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(RoomSerializer(room).data, status=status.HTTP_200_OK)
+
+
+
+class RoomMemberStatusView(generics.RetrieveAPIView):
+    serializer_class = RoomMemberSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        # Get parameters from URL
+        room_code = self.kwargs.get('room_code')
+        username = self.kwargs.get('username')
+        
+        try:
+            # Retrieve the RoomMember object
+            room_member = RoomMember.objects.get(
+                room__code=room_code,
+                user__username=username
+            )
+            # Serialize the object
+            serializer = RoomMemberSerializer(room_member)
+            # Return serialized data
+            return Response(serializer.data)
+        except RoomMember.DoesNotExist:
+            # Return 404 if object not found
+            raise Http404("RoomMember not found.")

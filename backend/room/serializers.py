@@ -2,12 +2,14 @@ from rest_framework import serializers
 from uploadRoom.serializers import SongSerializer
 from chat.serializers import MessageSerializer
 from .models import Room ,RoomMember
+from accounts.serializers import UserSerializer
+
 
 class RoomSerializer(serializers.ModelSerializer):
     playlist = SongSerializer(many=True, read_only=True)
     messages = MessageSerializer(many=True, read_only=True)
-    members = serializers.StringRelatedField(many=True, read_only=True)
-
+    members = UserSerializer(many=True, read_only=True)
+    host = UserSerializer(read_only=True)
     class Meta:
         model = Room
         fields = ['id', 'code', 'host', 'members' , 'created_at', 'playlist', 'messages']

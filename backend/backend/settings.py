@@ -170,3 +170,6 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
+
+# Base URL for constructing absolute URLs
+BASE_URL = 'http://127.0.0.1:8000'

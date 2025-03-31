@@ -46,6 +46,8 @@ const HomePage = () => {
   const handleCreateRoom = async () => {
     try {
       const response = await request.post('/room/create/');
+      console.log("room informations - >", response.data);
+
       navigate(`/room/`, { state: { room: response.data, user: user } });
     } catch (err) {
       setError('Failed to create a room.');

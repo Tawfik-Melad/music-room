@@ -1,0 +1,160 @@
+/* Chat Container */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 600px;
+    margin: auto;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Messages List */
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #f8f8f8;
+}
+
+/* No Messages Text */
+.no-messages {
+    text-align: center;
+    font-size: 14px;
+    color: #888;
+}
+
+/* Message Wrapper */
+.message-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    max-width: 75%;
+}
+
+/* Sent Messages (Current User) */
+.sent {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+/* Received Messages (Other Users) */
+.received {
+    align-self: flex-start;
+}
+
+/* Message Content */
+.message-content {
+    background: #1D4D4F;
+    /* Changed: Other people's messages */
+    color: white;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 14px;
+    position: relative;
+    max-width: 100%;
+}
+
+/* Sent Messages Styling (Your Messages) */
+.sent .message-content {
+    background: #f2a03d;
+    /* Changed: Your messages */
+    color: white;
+    border-radius: 16px 16px 0px 16px;
+}
+
+/* Received Messages Styling */
+.received .message-content {
+    background: #1D4D4F;
+    /* Changed: Other people's messages */
+    color: white;
+    border-radius: 16px 16px 16px 0px;
+}
+
+/* Sender Name (For Received Messages) */
+.sender-name {
+    font-size: 12px;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 4px;
+}
+
+/* Timestamp */
+.timestamp {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 4px;
+    display: block;
+    text-align: right;
+}
+
+/* Scoped Profile Picture */
+.chat-container .profile-pic {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Input Box */
+.chat-input {
+    display: flex;
+    padding: 10px;
+    background: white;
+    border-top: 1px solid #ddd;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    background: #f0f0f0;
+}
+
+.chat-input button {
+    background: #f2a03d;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    margin-left: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.chat-input button:hover {
+    background: #e08a2e;
+}
+
+/* Make it Responsive */
+@media (max-width: 600px) {
+    .chat-container {
+        width: 100%;
+        height: 100vh;
+    }
+
+    .message-content {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .chat-input input {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .chat-input button {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+}

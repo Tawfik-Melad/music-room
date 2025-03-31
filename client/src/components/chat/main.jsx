@@ -1,5 +1,7 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef ,useContext} from 'react';
 import request from '../../pre-request';
+import { RoomContext } from '../../contexts/room-contexts';
+import '../../styles/chat.css';
 
 const Chat = ({room , user}) => {
 
@@ -8,11 +10,11 @@ const Chat = ({room , user}) => {
   const [socket, setSocket] = useState(null);
   const messageEndRef = useRef(null);
   const [isConnected, setIsConnected] = useState(false);
-
+  const { isUserActive, getProfilePicture } = useContext(RoomContext);
   useEffect(() => {
       if (room?.messages) {
         const messageObjects = room.messages.map((msg) => ({
-          sender: msg.sender,          // Add sender
+          sender: msg.user.username,          // Add sender
           content: msg.content,        // Add content
           timestamp: msg.timestamp,    // Add timestamp
         })); 
@@ -72,7 +74,7 @@ const Chat = ({room , user}) => {
       const messageData = {
         type: "chat_message",
         message: {
-          sender: "You",
+          sender: user.username,
           content: inputMessage,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
@@ -94,58 +96,55 @@ const Chat = ({room , user}) => {
   }
 
   return (
-    <div>
-      <div>
-        {/* Room Info */}
-        <div>
-          <h2>🎤 {room.code}</h2>
-          <p>👑 Host: {room.host}</p>
-          <p>🧑‍🤝‍🧑 {room.members?.length || 0} Members</p>
-        </div>
-
-        {/* Connection Status */}
-        <div>
-          {isConnected ? '🟢 Connected' : '🔴 Disconnected'}
-        </div>
-      </div>
-
-      {/* Chat Messages */}
-      <div>
-        {messages.length === 0 ? (
-          <p>No messages yet. Say hi! 👋</p>
-        ) : (
-          messages.map((msg, idx) => (
-            <div key={idx}>
-              <span>
-                {msg.sender}
-              </span>
-              <div>
-                {msg.content}
-              </div>
-              <span>
-                {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </span>
+            <div className="chat-container">
+            {/* Chat Messages */}
+            <div className="chat-messages">
+                {messages.length === 0 ? (
+                    <p className="no-messages">No messages yet. Say hi! 👋</p>
+                ) : (
+                    messages.map((msg, idx) => {
+                        const isCurrentUser = msg.sender === user.username;
+                        return (
+                            <div key={idx} className={`message-wrapper ${isCurrentUser ? "sent" : "received"}`}>
+                                {!isCurrentUser && (
+                                    <img
+                                        className="profile-pic"
+                                        src={getProfilePicture(msg.sender) || "/default-avatar.png"}
+                                        alt={`${msg.sender}'s profile`}
+                                    />
+                                )}
+                                <div className="message-content">
+                                    {!isCurrentUser && (
+                                        <span className="sender-name">
+                                            {msg.sender}
+                                            {isUserActive(msg.sender) ? " 🟢" : " ⚫"}
+                                        </span>
+                                    )}
+                                    <div className="message-text">{msg.content}</div>
+                                    <span className="timestamp">
+                                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                    </span>
+                                </div>
+                            </div>
+                        );
+                    })
+                )}
+                <div ref={messageEndRef} />
             </div>
-          ))
-        )}
-        <div ref={messageEndRef} />
-      </div>
 
-      {/* Message Input */}
-      <div>
-        <input
-          type="text"
-          placeholder="Type your message..."
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-        />
-        <button onClick={sendMessage}>
-          🚀 Send
-        </button>
-      </div>
-    </div>
-  );
+            {/* Message Input */}
+            <div className="chat-input">
+                <input
+                    type="text"
+                    placeholder="Type your message..."
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                />
+                <button onClick={sendMessage}>Send</button>
+            </div>
+        </div>
+    );
 };
 
 export default Chat;

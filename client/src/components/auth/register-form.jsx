@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import request from '../../pre-request.js';
-import '../../styles/auth/register.css'; // Import CSS file
 
 const RegisterForm = () => {
   const [username, setUsername] = useState('');
@@ -40,13 +39,13 @@ const RegisterForm = () => {
   };
 
   return (
-    <div >
+    <div>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <h2 >Register</h2>
-        {error && <p >{error}</p>}
+        <h2>Register</h2>
+        {error && <p>{error}</p>}
 
-        <div >
-          <label >Username</label>
+        <div>
+          <label>Username</label>
           <input
             type="text"
             placeholder="Enter your username"
@@ -56,8 +55,8 @@ const RegisterForm = () => {
           />
         </div>
 
-        <div >
-          <label >Email</label>
+        <div>
+          <label>Email</label>
           <input
             type="email"
             placeholder="Enter your email"
@@ -67,7 +66,7 @@ const RegisterForm = () => {
           />
         </div>
 
-        <div >
+        <div>
           <label>Password</label>
           <input
             type="password"
@@ -78,8 +77,8 @@ const RegisterForm = () => {
           />
         </div>
 
-        <div >
-          <label >Profile Picture</label>
+        <div>
+          <label>Profile Picture</label>
           <input
             type="file"
             accept="image/*"
@@ -87,7 +86,7 @@ const RegisterForm = () => {
           />
         </div>
 
-        <button type="submit" >
+        <button type="submit">
           Register
         </button>
       </form>

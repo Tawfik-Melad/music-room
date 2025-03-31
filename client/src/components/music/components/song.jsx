@@ -1,8 +1,9 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { MusicContext } from '../context/MusicContext';
 
 const Song = () => {
-    const { currentSong, audioRef, setIsPlaying } = useContext(MusicContext);
+    const { currentSong, setIsPlaying } = useContext(MusicContext);
+    const audioRef = useRef(null);
 
     useEffect(() => {
         if (currentSong && audioRef.current) {
@@ -12,15 +13,39 @@ const Song = () => {
                 
             audioRef.current.src = audioUrl;
             audioRef.current.load();
-            audioRef.current.play().catch(() => setIsPlaying(false));
+            
+            // Add event listeners for better control
+            audioRef.current.addEventListener('ended', () => setIsPlaying(false));
+            audioRef.current.addEventListener('error', (e) => {
+                console.error('Audio playback error:', e);
+                setIsPlaying(false);
+            });
+            
+            // Cleanup function
+            return () => {
+                if (audioRef.current) {
+                    audioRef.current.removeEventListener('ended', () => setIsPlaying(false));
+                    audioRef.current.removeEventListener('error', () => setIsPlaying(false));
+                }
+            };
         }
-    }, [currentSong]);
+    }, [currentSong, setIsPlaying]);
 
-    return currentSong ? (
-        <div className="current-song">
-            <p>Now Playing: {currentSong.info?.title || 'Unknown'}</p>
-        </div>
-    ) : <p>No song playing</p>;
+    return (
+        <>
+            <audio ref={audioRef} />
+            {currentSong ? (
+                <div>
+                    <p>Now Playing: {currentSong.info?.title || 'Unknown'}</p>
+                    <p>{currentSong.info?.artist || 'Unknown Artist'}</p>
+                </div>
+            ) : (
+                <div>
+                    <p>No song playing</p>
+                </div>
+            )}
+        </>
+    );
 };
 
 export default Song;

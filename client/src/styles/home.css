@@ -1,0 +1,235 @@
+.home-container {
+  min-height: calc(100vh - 64px); /* Subtract navbar height */
+  background-color: rgb(255, 198, 139);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.content-wrapper {
+  width: 100%;
+  min-height: calc(100vh - 64px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 4rem;
+  position: relative;
+}
+
+.illustration-container {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 400px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.music-share-illustration {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  padding: 3rem 2rem;
+  background: none;
+  box-shadow: none;
+  margin-right: 2rem;
+}
+
+.welcome-text {
+  font-size: 4rem;
+  background: linear-gradient(135deg, rgb(242, 160, 61), rgb(233,107,78));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1.2rem;
+  font-weight: 800;
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 1.4rem;
+  color: #2C3E50;
+  margin-bottom: 3rem;
+  line-height: 1.6;
+  text-align: center;
+  max-width: 90%;
+  font-weight: 500;
+}
+
+.room-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 440px;
+}
+
+.room-input {
+  width: 100%;
+  padding: 1.2rem 2rem;
+  border: 3px solid rgba(242, 160, 61, 0.3);
+  border-radius: 20px;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.room-input:focus {
+  outline: none;
+  border-color: rgb(242, 160, 61);
+  box-shadow: 0 0 0 4px rgba(242, 160, 61, 0.15);
+  transform: translateY(-2px);
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+.room-input::placeholder {
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+  width: 100%;
+  max-width: 440px;
+  color: #34495e;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 3px;
+  background: linear-gradient(to right, rgba(242, 160, 61, 0.1), rgba(242, 160, 61, 0.4), rgba(242, 160, 61, 0.1));
+}
+
+.btn {
+  padding: 1.2rem 2rem;
+  border-radius: 20px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  border: none;
+  width: 100%;
+  max-width: 440px;
+  letter-spacing: 0.5px;
+}
+
+.btn-join {
+  background: linear-gradient(135deg, rgb(242, 160, 61), rgb(233,107,78));
+  color: white;
+  border: none;
+  box-shadow: 0 10px 25px rgba(242, 160, 61, 0.25);
+}
+
+.btn-join:hover {
+  background: linear-gradient(135deg, rgb(233,107,78), rgb(242, 160, 61));
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(233,107,78, 0.3);
+}
+
+.btn-create {
+  background: rgba(255, 255, 255, 0.9);
+  color: rgb(242, 160, 61);
+  border: 3px solid rgb(242, 160, 61);
+  margin-top: 0.5rem;
+  transition: all 0.4s ease;
+}
+
+.btn-create:hover {
+  background: linear-gradient(135deg, rgb(242, 160, 61), rgb(255, 198, 139));
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(242, 160, 61, 0.25);
+  border-color: transparent;
+}
+
+.error-message {
+  color: #E74C3C;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .content-wrapper {
+    padding: 2rem;
+  }
+
+  .form-container {
+    margin-right: 0;
+  }
+
+  .welcome-text {
+    font-size: 3.5rem;
+  }
+
+  .illustration-container {
+    width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    padding: 1rem;
+  }
+  
+  .illustration-container {
+    width: 200px;
+  }
+  
+  .welcome-text {
+    font-size: 2.8rem;
+  }
+  
+  .subtitle {
+    font-size: 1.2rem;
+  }
+
+  .content-wrapper {
+    padding: 1.5rem;
+  }
+
+  .form-container {
+    padding: 2rem 1rem;
+  }
+
+  .btn, .room-input {
+    padding: 1rem 1.8rem;
+  }
+}

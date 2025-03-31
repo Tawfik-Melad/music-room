@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef ,useContext} from 'react';
 import request from '../../pre-request';
-import '../../styles/user-status.css';
+import { RoomContext } from '../../contexts/room-contexts';
 
 const UserStatus = ({ room, user }) => {
-  const [users, setUsers] = useState([]);
+  const { users, setUsers } = useContext(RoomContext);
   const ws = useRef(null);
 
   // Initialize all room members as offline
@@ -72,13 +72,13 @@ const UserStatus = ({ room, user }) => {
   }, [room.code, user]);
 
   return (
-    <div className="online-users">
-      <h4>👥 Online Users</h4>
+    <div>
       <ul>
         {users.map((user) => (
-          <li key={user.username} data-status={user.status}>
-            <span className="username">{user.username}</span>
-            <span className="status">
+          <li key={user.username}>
+            <span>{user.username}</span>
+            <img src={user?.profile_picture} alt={user.username} />
+            <span>
               {user.status === 'online' ? '🟢 Online' : '⚫ Offline'}
             </span>
           </li>

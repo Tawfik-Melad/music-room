@@ -37,16 +37,15 @@ const Uploading = ({ roomCode }) => {
     };
 
     return (
-        <div className="upload-section">
+        <div>
             <input
                 ref={fileInputRef}
                 type="file"
                 accept="audio/*"
                 onChange={handleFileUpload}
-                style={{ display: 'none' }}
                 id="file-upload"
             />
-            <label htmlFor="file-upload" className="upload-button">
+            <label htmlFor="file-upload">
                 Upload Song
             </label>
         </div>

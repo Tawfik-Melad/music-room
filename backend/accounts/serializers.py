@@ -28,3 +28,14 @@ class RegisterSerializer(serializers.ModelSerializer):
     
     
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ["id", "username", "email","profile_picture"]
+
+    def get_profile_picture(self, obj):
+        if obj.profile.profile_picture:
+            return self.context["request"].build_absolute_uri(obj.profile.profile_picture.url)
+        return None

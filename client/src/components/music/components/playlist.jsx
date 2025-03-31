@@ -24,9 +24,9 @@ const Playlist = ({ roomCode }) => {
     };
 
     return (
-        <div className="song-list">
+        <div>
             {songs.map(song => (
-                <div key={song.id} className="song-item" onClick={() => handleSongSelect(song)}>
+                <div key={song.id} onClick={() => handleSongSelect(song)}>
                     <p>{song.info?.title || 'Unknown Title'}</p>
                 </div>
             ))}

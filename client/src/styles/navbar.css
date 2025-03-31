@@ -1,0 +1,246 @@
+/* General Navbar Styles */
+.navbar {
+    height: 70px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.nav-blur-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    z-index: -1;
+}
+
+.navbar.scrolled .nav-blur-bg {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Container */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Logo Section */
+.logo-section {
+    display: flex;
+    align-items: center;
+}
+
+.home-btn {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.logo-icon {
+    font-size: 24px;
+    color: rgb(242, 160, 61);
+}
+
+.logo-text {
+    font-size: 22px;
+    font-weight: 700;
+    background: linear-gradient(135deg, rgb(242, 160, 61), rgb(233,107,78));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.home-btn:hover {
+    background: rgba(242, 160, 61, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Middle Section with Music Wave */
+.navbar-middle {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.music-wave {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 20px;
+}
+
+.wave {
+    width: 3px;
+    height: 100%;
+    background: rgb(242, 160, 61);
+    animation: wave 1s infinite;
+    border-radius: 3px;
+}
+
+.wave:nth-child(2) { animation-delay: 0.2s; }
+.wave:nth-child(3) { animation-delay: 0.4s; }
+.wave:nth-child(4) { animation-delay: 0.6s; }
+
+@keyframes wave {
+    0% { height: 4px; }
+    50% { height: 16px; }
+    100% { height: 4px; }
+}
+
+.navbar-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2C3E50;
+}
+
+/* Profile Section */
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+    background: none;
+    border: none;
+    color: #2C3E50;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    background: rgba(242, 160, 61, 0.1);
+    color: rgb(242, 160, 61);
+    transform: rotate(180deg);
+}
+
+/* User Info */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 5px;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(242, 160, 61, 0.2);
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.username {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2C3E50;
+}
+
+.user-status {
+    font-size: 12px;
+    color: rgb(242, 160, 61);
+}
+
+.profile-img-container {
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+.profile-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgb(242, 160, 61);
+    transition: transform 0.3s ease;
+}
+
+.online-indicator {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    background: #2ecc71;
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+/* Logout Button */
+.logout-btn {
+    background: none;
+    border: none;
+    color: #2C3E50;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.logout-btn:hover {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.logout-tooltip {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.logout-btn:hover .logout-tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar-middle {
+        display: none;
+    }
+
+    .user-details {
+        display: none;
+    }
+
+    .container {
+        padding: 0 1rem;
+    }
+}

@@ -1,7 +1,10 @@
 // HomePage.jsx
-import { useState , useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import request from '../pre-request';
+import Navbar from '../components/common/navbar';
+import musicShareIllustration from '../styles/ChatGPT Image Mar 30, 2025, 06_01_24 PM.png';
+import '../styles/home.css';
 
 const HomePage = () => {
   const [roomCode, setRoomCode] = useState('');
@@ -10,22 +13,18 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   // get user info
-  
   useEffect(() => {
     const getUser = async () => {
       try {
         const response = await request.get('/accounts/get-user/');
         setUser(response.data);
-        console.log("user informations - >",response.data);
+        console.log("user informations - >", response.data);
       } catch (err) {
         console.error(err);
       }
     };
     getUser();
-    
   }, []);
-
-
 
   // Handle Join Room
   const handleJoinRoom = async (e) => {
@@ -37,7 +36,7 @@ const HomePage = () => {
 
     try {
       const response = await request.get(`/room/get/${roomCode}/`);
-      navigate(`/room/`, { state: { room: response.data, user:user } });
+      navigate(`/room/`, { state: { room: response.data, user: user } });
     } catch (err) {
       setError('Invalid room code or unable to join.');
     }
@@ -47,40 +46,53 @@ const HomePage = () => {
   const handleCreateRoom = async () => {
     try {
       const response = await request.post('/room/create/');
-      navigate(`/room/`, { state: { room:response.data ,user:user} });
+      navigate(`/room/`, { state: { room: response.data, user: user } });
     } catch (err) {
       setError('Failed to create a room.');
     }
   };
 
   return (
-    <div className="home-container">
-      <div className="home-card">
-        <h2 className="home-title">🎶 Welcome to Music Rooms!</h2>
+    <>
+      <Navbar user={user} />
+      <div className="home-container">
+        <div className="content-wrapper">
+          <div className="illustration-container">
+            <img 
+              src={musicShareIllustration} 
+              alt="Music Sharing Illustration" 
+              className="music-share-illustration"
+            />
+          </div>
+          <div className="form-container">
+            <h1 className="welcome-text">Share Music Together</h1>
+            <p className="subtitle">Join or create a room to start sharing music with friends</p>
 
-        {error && <p className="error-message">{error}</p>}
+            {error && <p className="error-message">{error}</p>}
 
-        {/* Join Room Form */}
-        <form onSubmit={handleJoinRoom}>
-          <input
-            type="text"
-            placeholder="Enter Room Code"
-            value={roomCode}
-            onChange={(e) => setRoomCode(e.target.value)}
-            className="home-input"
-          />
-          <button type="submit" className="home-button join">
-            Join Room
-          </button>
-        </form>
+            {/* Join Room Form */}
+            <form onSubmit={handleJoinRoom} className="room-form">
+              <input
+                type="text"
+                placeholder="Enter Room Code"
+                value={roomCode}
+                onChange={(e) => setRoomCode(e.target.value)}
+                className="room-input"
+              />
+              <button type="submit" className="btn btn-join">
+                Join Room
+              </button>
+            </form>
 
-        <p className="or-text">Or</p>
+            <div className="divider">or</div>
 
-        <button onClick={handleCreateRoom} className="home-button create">
-          Create Room
-        </button>
+            <button onClick={handleCreateRoom} className="btn btn-create">
+              Create New Room
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

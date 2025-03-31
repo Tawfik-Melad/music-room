@@ -4,7 +4,6 @@ import Uploading from './components/upload';
 import Playlist from './components/playlist';
 import Song from './components/song';
 import ControlBar from './components/control-bar';
-import './music.css';
 import request from '../../pre-request';
 
 const Main = ({ roomCode }) => {
@@ -28,17 +27,17 @@ const Main = ({ roomCode }) => {
 
     // Show loading or error message
     if (loading) {
-        return <p className="loading-message">Loading Music Room...</p>;
+        return <p>Loading Music Room...</p>;
     }
 
     if (error) {
-        return <p className="error-message">{error}</p>;
+        return <p>{error}</p>;
     }
 
     // Render the components only after loading is complete
     return (
         <MusicProvider>
-            <div className="music-container">
+            <div>
                 <h2>Music Room</h2>
                 <Uploading roomCode={roomCode} />
                 <Playlist roomCode={roomCode} />

@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
 import request from '../../pre-request';
-import '../../styles/chat.css';
 
 const Chat = ({room , user}) => {
 
@@ -52,7 +51,6 @@ const Chat = ({room , user}) => {
     };
 
     ws.onclose = () => {
-      
       setIsConnected(false);
     };
 
@@ -96,8 +94,8 @@ const Chat = ({room , user}) => {
   }
 
   return (
-    <div className="chat-container">
-      <div className="chat-header">
+    <div>
+      <div>
         {/* Room Info */}
         <div>
           <h2>🎤 {room.code}</h2>
@@ -106,28 +104,25 @@ const Chat = ({room , user}) => {
         </div>
 
         {/* Connection Status */}
-        <div className={`connection-status ${isConnected ? 'connected' : 'disconnected'}`}>
+        <div>
           {isConnected ? '🟢 Connected' : '🔴 Disconnected'}
         </div>
       </div>
 
       {/* Chat Messages */}
-      <div className="messages-container">
+      <div>
         {messages.length === 0 ? (
-          <p className="message received">No messages yet. Say hi! 👋</p>
+          <p>No messages yet. Say hi! 👋</p>
         ) : (
           messages.map((msg, idx) => (
-            <div
-              key={idx}
-              className={`message ${msg.sender === "You" ? "sent" : "received"}`}
-            >
-              <span className="message-sender">
+            <div key={idx}>
+              <span>
                 {msg.sender}
               </span>
-              <div className="message-content">
+              <div>
                 {msg.content}
               </div>
-              <span className="message-time">
+              <span>
                 {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
@@ -137,19 +132,15 @@ const Chat = ({room , user}) => {
       </div>
 
       {/* Message Input */}
-      <div className="input-container">
+      <div>
         <input
           type="text"
-          className="message-input"
           placeholder="Type your message..."
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
         />
-        <button
-          onClick={sendMessage}
-          className="send-button"
-        >
+        <button onClick={sendMessage}>
           🚀 Send
         </button>
       </div>

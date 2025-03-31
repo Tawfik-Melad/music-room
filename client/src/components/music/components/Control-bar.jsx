@@ -14,7 +14,7 @@ const ControlBar = () => {
     };
 
     return (
-        <div className="control-bar">
+        <div>
             <button onClick={handlePlayPause}>
                 {isPlaying ? 'Pause' : 'Play'}
             </button>

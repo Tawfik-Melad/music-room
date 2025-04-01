@@ -1,0 +1,233 @@
+.upload-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 15px;
+    padding-left: 30px;
+    position: relative;
+    background: white;
+    z-index: 10;
+    gap: 15px;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+    margin-top: 10px;
+}
+
+.upload-container::before {
+    content: '';
+    position: absolute;
+    top: -30px;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+    pointer-events: none;
+}
+
+/* Hide the default file input */
+.upload-container input[type="file"] {
+    display: none;
+}
+
+/* Custom upload button */
+.upload-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: #f2a03d;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(242, 160, 61, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover effect */
+.upload-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(242, 160, 61, 0.4);
+    background: #ff9f2f;
+}
+
+/* Active effect */
+.upload-btn:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 4px 15px rgba(242, 160, 61, 0.3);
+}
+
+/* Upload icon */
+.upload-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-icon::before {
+    content: '+';
+    font-size: 40px;
+    line-height: 1;
+    color: white;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Ripple effect */
+.upload-btn::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: scale(0);
+    transition: transform 0.5s ease-out;
+}
+
+.upload-btn:hover::after {
+    transform: scale(2);
+    opacity: 0;
+}
+
+/* Loading animation */
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.loading .upload-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+}
+
+.loading .upload-icon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    transform-origin: center;
+}
+
+/* Success animation */
+@keyframes success-scale {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.success .upload-icon::before {
+    content: '✓';
+    font-size: 28px;
+    animation: success-scale 0.5s ease-out;
+}
+
+/* Add song text */
+.upload-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: #666;
+    opacity: 0.9;
+    transition: all 0.3s ease;
+    position: relative;
+    padding-bottom: 2px;
+}
+
+.upload-text::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #f2a03d;
+    transition: width 0.3s ease;
+}
+
+.upload-container:hover .upload-text {
+    color: #f2a03d;
+}
+
+.upload-container:hover .upload-text::after {
+    width: 100%;
+}
+
+/* Loading state text */
+.loading .upload-text {
+    background: linear-gradient(90deg, #f2a03d, #ff9f2f, #f2a03d);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: shine 1.5s linear infinite;
+}
+
+/* Success state text */
+.success .upload-text {
+    color: #4CAF50;
+}
+
+@keyframes shine {
+    to {
+        background-position: 200% center;
+    }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .upload-container {
+        padding: 15px;
+        padding-left: 20px;
+        gap: 12px;
+    }
+
+    .upload-btn {
+        width: 50px;
+        height: 50px;
+    }
+
+    .upload-icon::before {
+        font-size: 32px;
+    }
+
+    .loading .upload-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .loading .upload-icon::before {
+        width: 24px;
+        height: 24px;
+        border-width: 2px;
+    }
+
+    .upload-text {
+        font-size: 14px;
+    }
+}

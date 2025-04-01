@@ -6,6 +6,7 @@ import Login from './pages/login'
 import Register from './pages/register'
 import Room from './pages/room'
 import ProtectedRoute from './components/common/protected-route'
+import { MainProvider } from './contexts/contexts'
 
 function Logout() {
   localStorage.clear()
@@ -18,13 +19,12 @@ function RegisterAndLogout() {
 }
 
 function App() {
-
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
+      <MainProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path="/"
             element={
               <ProtectedRoute>
                 <Home />
@@ -37,7 +37,7 @@ function App() {
           <Route path="/room" element={<Room />} />
         </Routes>
       </BrowserRouter>
-    </>
+    </MainProvider>
   )
 }
 

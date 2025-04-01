@@ -1,0 +1,72 @@
+.room-wrapper {
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+.playlist-chat-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding: 20px;
+    height: calc(100vh - 100px);
+    min-height: 400px;
+}
+
+.playlist-chat-container > * {
+    flex: 1;
+    width: 50%;
+    min-width: 0;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    height: 100%;
+}
+
+/* Scrollbar styling */
+.playlist-chat-container > *::-webkit-scrollbar {
+    width: 8px;
+}
+
+.playlist-chat-container > *::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.playlist-chat-container > *::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.playlist-chat-container > *::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+
+
+    .playlist-chat-container {
+        flex-direction: column;
+        padding: 10px;
+        gap: 10px;
+        height: auto;
+        min-height: auto;
+    }
+
+    .playlist-chat-container > * {
+        width: 100%;
+        height: auto;
+        min-height: 300px;
+    }
+
+    .playlist-chat-container > *:first-child {
+        order: 1;
+    }
+
+    .playlist-chat-container > *:last-child {
+        order: 2;
+    }
+}

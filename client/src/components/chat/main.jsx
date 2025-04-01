@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef ,useContext} from 'react';
 import request from '../../pre-request';
-import { RoomContext } from '../../contexts/room-contexts';
+import { MainContext } from '../../contexts/contexts';
 import '../../styles/chat.css';
 
 const Chat = ({room , user}) => {
@@ -10,7 +10,7 @@ const Chat = ({room , user}) => {
   const [socket, setSocket] = useState(null);
   const messageEndRef = useRef(null);
   const [isConnected, setIsConnected] = useState(false);
-  const { isUserActive, getProfilePicture } = useContext(RoomContext);
+  const { isUserActive, getProfilePicture } = useContext(MainContext);
   useEffect(() => {
       if (room?.messages) {
         const messageObjects = room.messages.map((msg) => ({
@@ -76,7 +76,7 @@ const Chat = ({room , user}) => {
         message: {
           sender: user.username,
           content: inputMessage,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          timestamp: new Date().toISOString(),
         },
       };
       socket.send(JSON.stringify(messageData));
@@ -86,9 +86,30 @@ const Chat = ({room , user}) => {
 
   // Helper: Format Date
   const formatTimestamp = (timestamp) => {
-    const today = new Date().toDateString();
-    const msgDate = new Date(timestamp).toDateString();
-    return today === msgDate ? "Today" : "Yesterday";
+    try {
+      const date = new Date(timestamp);
+      if (isNaN(date.getTime())) {
+        return "Invalid Date";
+      }
+      const today = new Date().toDateString();
+      const msgDate = date.toDateString();
+      return today === msgDate ? "Today" : "Yesterday";
+    } catch (error) {
+      return "Invalid Date";
+    }
+  };
+
+  // Helper: Format Time
+  const formatTime = (timestamp) => {
+    try {
+      const date = new Date(timestamp);
+      if (isNaN(date.getTime())) {
+        return "Invalid Time";
+      }
+      return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    } catch (error) {
+      return "Invalid Time";
+    }
   };
 
   if (!room) {
@@ -122,7 +143,7 @@ const Chat = ({room , user}) => {
                                     )}
                                     <div className="message-text">{msg.content}</div>
                                     <span className="timestamp">
-                                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                        {formatTime(msg.timestamp)}
                                     </span>
                                 </div>
                             </div>

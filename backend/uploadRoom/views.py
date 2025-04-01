@@ -6,7 +6,7 @@ from .models import MusicRoom, Room, Song, SongInfo
 from .serializers import MusicRoomSerializer, SongSerializer, SongInfoSerializer
 from django.shortcuts import get_object_or_404
 import json
-
+from django.conf import settings
 class MusicRoomView(APIView):
 
     def get(self, request, room_code):
@@ -91,7 +91,8 @@ class SongView(APIView):
                     SongInfo.objects.create(
                         song=song,
                         title=info_data.get('title', ''),
-                        artist=info_data.get('artist', '')
+                        artist=info_data.get('artist', ''),
+                        cover_picture= request.build_absolute_uri('/media/song-covers/defult.png')
                     )
                 except json.JSONDecodeError:
                     return Response({"error": "Invalid info format"}, status=status.HTTP_400_BAD_REQUEST)

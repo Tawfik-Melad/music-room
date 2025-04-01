@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import request from '../../pre-request';
-import { RoomContext } from '../../contexts/room-contexts';
+import { MainContext } from '../../contexts/contexts';
 import '../../styles/user-status.css';
 
 const UserStatus = ({ room, user }) => {
-  const { users, setUsers } = useContext(RoomContext);
+  const { users, setUsers } = useContext(MainContext);
   const ws = useRef(null);
   const [loading, setLoading] = useState(true);
 

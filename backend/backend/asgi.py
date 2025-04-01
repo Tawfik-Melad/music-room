@@ -4,6 +4,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 import chat.routing 
 import room.routing
+import uploadRoom.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 application = get_asgi_application()
@@ -15,7 +16,8 @@ application = ProtocolTypeRouter({
     'websocket': AuthMiddlewareStack(
         URLRouter(
             chat.routing.websocket_urlpatterns +
-            room.routing.websocket_urlpatterns
+            room.routing.websocket_urlpatterns +
+            uploadRoom.routing.websocket_urlpatterns
         )
     ),
 })

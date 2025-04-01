@@ -4,7 +4,7 @@ import request from '../../pre-request';
 import './styles/upload.css';
 
 const Uploading = ({ roomCode }) => {
-    const { setSongs, setCurrentSong, setIsPlaying, setUploadError } = useContext(MainContext);
+    const { setSongs, setCurrentSong, setIsPlaying, setUploadError, broadcastNewSong } = useContext(MainContext);
     const fileInputRef = useRef(null);
     const [uploadState, setUploadState] = useState('idle'); // idle, loading, success
 
@@ -25,19 +25,15 @@ const Uploading = ({ roomCode }) => {
         setUploadState('loading');
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('info', JSON.stringify({ 
-            title: file.name, 
-            artist: 'Unknown',
-            cover_picture: 'client/src/styles/ChatGPT Image Mar 30, 2025, 06_01_24 PM.png' 
-        }));
+
 
         try {
             const response = await request.post(`/api/music-rooms/${roomCode}/songs/`, formData);
-            setSongs(prev => [...prev, response.data]);
             setCurrentSong(response.data);
             setIsPlaying(true);
             setUploadState('success');
             setTimeout(() => setUploadState('idle'), 2000); // Reset after 2 seconds
+            broadcastNewSong(response.data);
         } catch (error) {
             setUploadError('Failed to upload song');
             setUploadState('idle');

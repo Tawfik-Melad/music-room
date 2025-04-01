@@ -1,17 +1,17 @@
 // HomePage.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import request from '../pre-request';
 import Navbar from '../components/common/navbar';
 import musicShareIllustration from '../styles/ChatGPT Image Mar 30, 2025, 06_01_24 PM.png';
 import '../styles/home.css';
-
+import { MainContext } from '../contexts/contexts';
 const HomePage = () => {
   const [roomCode, setRoomCode] = useState('');
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
-
+  const { clearData } = useContext(MainContext);
   // get user info
   useEffect(() => {
     const getUser = async () => {
@@ -24,6 +24,7 @@ const HomePage = () => {
       }
     };
     getUser();
+    clearData();
   }, []);
 
   // Handle Join Room

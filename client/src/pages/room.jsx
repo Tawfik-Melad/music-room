@@ -44,13 +44,13 @@ const Room = () => {
   return (
     <div className="room-wrapper">
         <Navbar user={user} />
-          <RoomInfo room={room} />
           <Song />
       <div className='playlist-chat-container'>
           <Playlist roomCode={room?.code} />
           <Chat room={room} user={user} />
       </div>
       <UserStatus room={room} user={user} />
+              <RoomInfo room={room} />
 
     </div>
   );

@@ -59,7 +59,7 @@ class SongView(APIView):
             room = Room.objects.get(code=room_code)
             music_room = MusicRoom.objects.get(room=room)
             songs = Song.objects.filter(room=music_room)
-            serializer = SongSerializer(songs, many=True)
+            serializer = SongSerializer(songs, many=True, context={'request': request})
             return Response(serializer.data)
         except Room.DoesNotExist:
             return Response({"error": "Room not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -97,7 +97,7 @@ class SongView(APIView):
                 except json.JSONDecodeError:
                     return Response({"error": "Invalid info format"}, status=status.HTTP_400_BAD_REQUEST)
 
-            serializer = SongSerializer(song)
+            serializer = SongSerializer(song, context={'request': request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Room.DoesNotExist:
             return Response({"error": "Room not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -111,7 +111,7 @@ class SongDetailView(APIView):
             room = Room.objects.get(code=room_code)
             music_room = MusicRoom.objects.get(room=room)
             song = Song.objects.get(id=song_id, room=music_room)
-            serializer = SongSerializer(song)
+            serializer = SongSerializer(song, context={'request': request})
             return Response(serializer.data)
         except (Room.DoesNotExist, MusicRoom.DoesNotExist, Song.DoesNotExist):
             return Response({"error": "Not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -135,7 +135,7 @@ class SongDetailView(APIView):
                 if info_serializer.is_valid():
                     info_serializer.save()
 
-            serializer = SongSerializer(song)
+            serializer = SongSerializer(song, context={'request': request})
             return Response(serializer.data)
         except (Room.DoesNotExist, MusicRoom.DoesNotExist, Song.DoesNotExist):
             return Response({"error": "Not found"}, status=status.HTTP_404_NOT_FOUND)

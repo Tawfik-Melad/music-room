@@ -56,7 +56,14 @@ const Playlist = ({ roomCode }) => {
                                 onClick={() => handleSongSelect(song)}
                             >
                                 <div className="song-cover">
-                                    <img src="/defult.png" alt="Cover" />
+                                    <img 
+                                        src={song.info?.cover_picture || "/static/defult.png"} 
+                                        alt="Cover" 
+                                        onError={(e) => {
+                                            e.target.onerror = null; // Prevent infinite loop
+                                            e.target.src = "/static/defult.png";
+                                        }}
+                                    />
                                     <div className="user-avatar">
                                         <img src={getProfilePicture(song.uploaded_by)} alt="Profile" />
                                     </div>

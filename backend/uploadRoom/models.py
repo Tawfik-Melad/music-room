@@ -49,7 +49,7 @@ class SongInfo(models.Model):
     song = models.OneToOneField(Song, on_delete=models.CASCADE, related_name='info')
     title = models.CharField(max_length=255)
     artist = models.CharField(max_length=255)
-    cover_picture = models.ImageField(upload_to='song-covers/', blank=True, null=True)
+    cover_picture = models.URLField(max_length=500, blank=True, null=True)
 
     def __str__(self):
         return f"{self.title} by {self.artist}"

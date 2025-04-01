@@ -4,7 +4,7 @@ import { FaPlay, FaPause, FaForward, FaBackward, FaHeart } from "react-icons/fa"
 import "./styles/song.css";
 
 const Song = () => {
-    const { currentSong, setIsPlaying, playNextSong } = useContext(MainContext);
+    const { currentSong, setIsPlaying, playNextSong, getProfilePicture } = useContext(MainContext);
     const audioRef = useRef(null);
     const [isPlaying, setPlaying] = useState(false);
     const [progress, setProgress] = useState(0);
@@ -56,9 +56,9 @@ const Song = () => {
                 <div className="song-details">
                     {/* Song Cover + Uploader */}
                     <div className="song-cover">
-                        <img src={currentSong.info?.cover || "/default-song.png"} alt="Cover" />
+                        <img src={currentSong.info?.cover_picture || "/default-song.png"} alt="Cover" />
                         <div className="uploader-avatar">
-                            <img src={currentSong.uploaded_by_photo || "/default-avatar.png"} alt="Uploader" />
+                            <img src={getProfilePicture(currentSong.uploaded_by)} alt="Uploader" />
                         </div>
                     </div>
 

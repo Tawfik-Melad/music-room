@@ -7,6 +7,13 @@ from .serializers import MusicRoomSerializer, SongSerializer, SongInfoSerializer
 from django.shortcuts import get_object_or_404
 import json
 from django.conf import settings
+from .utils import  fetch_song_details ,clean_song_name
+
+
+
+
+
+
 class MusicRoomView(APIView):
 
     def get(self, request, room_code):
@@ -73,6 +80,8 @@ class SongView(APIView):
             
             # Handle file upload
             file_obj = request.FILES.get('file')
+            print("file_obj ->",file_obj.name)
+            print(type(file_obj.name))
             if not file_obj:
                 return Response({"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -83,19 +92,26 @@ class SongView(APIView):
                 room=music_room
             )
 
-            # Handle song info if provided
-            info_data = request.data.get('info')
-            if info_data:
-                try:
-                    info_data = json.loads(info_data) if isinstance(info_data, str) else info_data
-                    SongInfo.objects.create(
-                        song=song,
-                        title=info_data.get('title', ''),
-                        artist=info_data.get('artist', ''),
-                        cover_picture= request.build_absolute_uri('/media/song-covers/defult.png')
-                    )
-                except json.JSONDecodeError:
-                    return Response({"error": "Invalid info format"}, status=status.HTTP_400_BAD_REQUEST)
+            # Try to get song details from Spotify
+            song_name = file_obj.name.rsplit('.', 1)[0]  # Get filename without extension
+            spotify_info = fetch_song_details(song_name)
+            
+            if spotify_info:
+                # Create SongInfo with Spotify data
+                SongInfo.objects.create(
+                    song=song,
+                    title=clean_song_name(song_name),
+                    artist=spotify_info['artist'],
+                    cover_picture=spotify_info['cover']  # This is now a URL
+                )
+            else:
+                # Create SongInfo with default values if Spotify data not found
+                SongInfo.objects.create(
+                    song=song,
+                    title=song_name,
+                    artist="Unknown Artist",
+                    cover_picture=request.build_absolute_uri('/media/song-covers/defult.png')  # Use static URL for default image
+                )
 
             serializer = SongSerializer(song, context={'request': request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)

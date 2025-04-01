@@ -13,7 +13,6 @@ from .utils import  fetch_song_details ,clean_song_name
 
 
 
-
 class MusicRoomView(APIView):
 
     def get(self, request, room_code):
@@ -163,5 +162,21 @@ class SongDetailView(APIView):
             song = Song.objects.get(id=song_id, room=music_room)
             song.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+        except (Room.DoesNotExist, MusicRoom.DoesNotExist, Song.DoesNotExist):
+            return Response({"error": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, room_code, song_id):
+        try:
+            room = Room.objects.get(code=room_code)
+            music_room = MusicRoom.objects.get(room=room)
+            song = Song.objects.get(id=song_id, room=music_room)
+            
+            return Response({
+                'likes_count': song.likes_count,
+                'is_liked': request.user in song.liked_by.all()
+            })
         except (Room.DoesNotExist, MusicRoom.DoesNotExist, Song.DoesNotExist):
             return Response({"error": "Not found"}, status=status.HTTP_404_NOT_FOUND)

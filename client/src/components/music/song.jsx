@@ -3,12 +3,12 @@ import { MainContext } from "../../contexts/contexts";
 import { FaPlay, FaPause, FaForward, FaBackward, FaHeart } from "react-icons/fa"; // Icons
 import "./styles/song.css";
 
-const Song = () => {
-    const { currentSong, setIsPlaying, playNextSong, getProfilePicture } = useContext(MainContext);
+const Song = ({roomCode, user}) => {
+    const { currentSong,setCurrentSong, setIsPlaying, playNextSong, getProfilePicture, toggleLike , isSongLikedByUser} = useContext(MainContext);
     const audioRef = useRef(null);
     const [isPlaying, setPlaying] = useState(false);
     const [progress, setProgress] = useState(0);
-    const [loved, setLoved] = useState(false);
+    const [loved, setLoved] = useState(isSongLikedByUser(currentSong?.id, user.username));
 
     useEffect(() => {
         if (currentSong && audioRef.current) {
@@ -17,6 +17,13 @@ const Song = () => {
             setPlaying(false);
         }
     }, [currentSong]);
+
+    // Update loved state whenever currentSong changes
+    useEffect(() => {
+        if (currentSong?.id) {
+            setLoved(isSongLikedByUser(currentSong.id, user.username));
+        }
+    }, [currentSong, user.username]);
 
     const togglePlay = () => {
         if (audioRef.current.paused) {
@@ -41,7 +48,8 @@ const Song = () => {
     };
 
     const handleLove = () => {
-        setLoved(!loved);
+        setLoved(isSongLikedByUser(currentSong?.id, user.username));
+        toggleLike(currentSong.id, user.id, user.username);
         // You can send this reaction to the backend if needed
     };
 

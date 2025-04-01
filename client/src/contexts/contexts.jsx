@@ -25,6 +25,28 @@ export const MainProvider = ({ children }) => {
             if (data.type === 'song_update') {
                 // Add new song to the songs list
                 setSongs(prevSongs => [...prevSongs, data.song]);
+            } else if (data.type === 'like_update') {
+                // Update song likes count and liked usernames
+                setSongs(prevSongs => {
+                    const updatedSongs = prevSongs.map(song => {
+                        if (song.id === data.song_id) {
+                            return {
+                                ...song,
+                                likes_count: data.likes_count,
+                                liked_by: data.liked_usernames
+                            };
+                        }
+                        return song;
+                    });
+
+                    // If the liked song is the current song, update it
+                    if (currentSong && currentSong.id === data.song_id) {
+                        const updatedSong = updatedSongs.find(s => s.id === data.song_id);
+                        setCurrentSong(updatedSong);
+                    }
+
+                    return updatedSongs;
+                });
             }
         };
 
@@ -61,7 +83,7 @@ export const MainProvider = ({ children }) => {
     
     const getProfilePicture = (username) => {
         const user = users.find(user => user.username === username);
-        return user ? user.profile_picture : null; // Return the URL or null if not found
+        return user ? user.profile_picture : null;
     };
 
     const broadcastNewSong = (song) => {
@@ -71,6 +93,22 @@ export const MainProvider = ({ children }) => {
                 song: song
             }));
         }
+    };
+
+    const toggleLike = (songId, userId, username) => {
+        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+            wsRef.current.send(JSON.stringify({
+                type: 'toggle_like',
+                song_id: songId,
+                user_id: userId,
+                username: username
+            }));
+        }
+    };
+
+    const isSongLikedByUser = (songId, username) => {
+        const song = songs.find(s => s.id === songId);
+        return song ? song.liked_by?.includes(username) : false;
     };
     
     return (
@@ -89,7 +127,9 @@ export const MainProvider = ({ children }) => {
             audioRef,
             clearData,
             connectToRoom,
-            broadcastNewSong
+            broadcastNewSong,
+            toggleLike,
+            isSongLikedByUser
         }}>
             {children}
         </MainContext.Provider>

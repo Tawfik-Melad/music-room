@@ -5,7 +5,7 @@ import "./styles/playList.css";
 import Uploading from "./upload";
 
 const Playlist = ({ roomCode }) => {
-    const { songs, setSongs, setCurrentSong, setIsPlaying, getProfilePicture, currentSong } = useContext(MainContext);
+    const { songs, setSongs, setCurrentSong, setIsPlaying, getProfilePicture, currentSong, isSongLikedByUser } = useContext(MainContext);
 
     useEffect(() => {
         fetchSongs();

@@ -134,6 +134,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    position: relative;
 }
 
 .song-cover img {
@@ -146,12 +147,12 @@
 .user-avatar {
     position: absolute;
     bottom: -4px;
-    right: -4px;
+    left: -4px;
     width: 32px;
     height: 32px;
     border-radius: 50%;
     border: 2px solid #f2a03d;
-    background: white;
+    background: #f2a03d;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
     overflow: hidden;
     flex-shrink: 0;

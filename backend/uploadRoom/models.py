@@ -22,9 +22,14 @@ class Song(models.Model):
     song_position = models.FloatField(default=0)  # Current position in seconds
     room = models.ForeignKey(MusicRoom, on_delete=models.CASCADE, related_name='songs')
     order = models.PositiveIntegerField(default=0)
-
+    liked_by = models.ManyToManyField(User, related_name='liked_songs', blank=True)
+    
     def __str__(self):
         return f"{self.file.name} - {self.uploaded_by.username}"
+
+    @property
+    def likes_count(self):
+        return self.liked_by.count()
 
     # Automatically set the order when saving a new song
     def save(self, *args, **kwargs):

@@ -8,17 +8,19 @@ export const MainProvider = ({ children }) => {
     const [currentSong, setCurrentSong] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [uploadError, setUploadError] = useState(null);
+    const [uploadRoomId, setUploadRoomId] = useState(null);
+    const [currentUser, setCurrentUser] = useState(null);
     const audioRef = useRef(null);
     const wsRef = useRef(null);
 
-    const connectToRoom = (roomId) => {
+    const connectToRoom = (roomId, userId) => {
         // Close existing connection if any
         if (wsRef.current) {
             wsRef.current.close();
         }
 
-        // Create new WebSocket connection for specific room
-        wsRef.current = new WebSocket(`ws://localhost:8000/ws/roomSong/${roomId}/`);
+        // Create new WebSocket connection for specific room with user ID
+        wsRef.current = new WebSocket(`ws://localhost:8000/ws/roomSong/${roomId}/?user_id=${userId}`);
 
         wsRef.current.onmessage = (event) => {
             const data = JSON.parse(event.data);
@@ -75,7 +77,7 @@ export const MainProvider = ({ children }) => {
             // Attempt to reconnect after 3 seconds
             setTimeout(() => {
                 if (wsRef.current.readyState === WebSocket.CLOSED) {
-                    connectToRoom(roomId);
+                    connectToRoom(roomId, userId);
                 }
             }, 3000);
         };
@@ -162,7 +164,11 @@ export const MainProvider = ({ children }) => {
             broadcastNewSong,
             toggleLike,
             isSongLikedByUser,
-            updateListeningStatus
+            updateListeningStatus,
+            uploadRoomId,
+            setUploadRoomId,
+            currentUser,
+            setCurrentUser
         }}>
             {children}
         </MainContext.Provider>

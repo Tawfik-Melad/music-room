@@ -11,13 +11,14 @@ const HomePage = () => {
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  const { clearData } = useContext(MainContext);
+  const { clearData,setCurrentUser } = useContext(MainContext);
   // get user info
   useEffect(() => {
     const getUser = async () => {
       try {
         const response = await request.get('/accounts/get-user/');
         setUser(response.data);
+        setCurrentUser(response.data);
         console.log("user informations - >", response.data);
       } catch (err) {
         console.error(err);

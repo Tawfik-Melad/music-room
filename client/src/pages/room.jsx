@@ -14,13 +14,15 @@ const Room = () => {
   const location = useLocation();
   const room = location.state?.room;
   const user = location.state?.user;
-  const { connectToRoom } = useContext(MainContext);
+  const { connectToRoom, uploadRoomId ,setUploadRoomId} = useContext(MainContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const createUploadRoom = async () => {
       try {
-          await request.post(`/api/music-rooms/${room?.code}/`);
+          const response = await request.post(`/api/music-rooms/${room?.code}/`);
+          // Store the music room data in your state or context
+          setUploadRoomId(response.data.id);
           setLoading(false); // Data fetched, stop loading
       } catch (error) {
           console.error('Error creating upload room:', error);
@@ -30,9 +32,19 @@ const Room = () => {
   };
 
   useEffect(() => {
-      createUploadRoom(); 
-      connectToRoom(room?.code);
-  }, [room?.code]);
+      const initializeRoom = async () => {
+          try {
+              await createUploadRoom();
+              if (uploadRoomId) {
+                  connectToRoom(uploadRoomId, user.id);
+              }
+          } catch (error) {
+              console.error('Error initializing room:', error);
+          }
+      };
+
+      initializeRoom();
+  }, [uploadRoomId]); // Add uploadRoomId as dependency
 
   // Show loading or error message
   if (loading) {

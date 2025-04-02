@@ -3,7 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 from channels.db import database_sync_to_async
 from django.contrib.auth.models import User
-from .models import Song
+from .models import Song, MusicRoom
 
 
 class UploadRoomConsumer(AsyncWebsocketConsumer):
@@ -11,6 +11,22 @@ class UploadRoomConsumer(AsyncWebsocketConsumer):
         # Get room_id from the URL
         self.room_id = self.scope['url_route']['kwargs']['room_id']
         self.room_group_name = f'room_{self.room_id}'
+        
+        # Get user_id from query string
+        query_string = self.scope['query_string'].decode()
+        user_id = None
+        if 'user_id=' in query_string:
+            user_id = query_string.split('user_id=')[-1].split('&')[0]
+        
+        if not user_id:
+            await self.close()
+            return
+
+        # Get user and room asynchronously
+        self.user = await self.get_user(user_id)
+        if not self.user:
+            await self.close()
+            return
 
         # Join the room group
         await self.channel_layer.group_add(
@@ -20,11 +36,34 @@ class UploadRoomConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        # Leave the room group
-        await self.channel_layer.group_discard(
-            self.room_group_name,
-            self.channel_name
-        )
+        try:
+            if self.user.is_authenticated and self.room_id:
+                # Get all songs in the room
+                songs = await self.get_room_songs()
+                
+                # Remove user from all songs' listening lists
+                for song in songs:
+                    if self.user.username in song.listening_users:
+                        song.listening_users.remove(self.user.username)
+                        await self.save_song(song)
+                        
+                        # Notify other users about the update
+                        await self.channel_layer.group_send(
+                            self.room_group_name,
+                            {
+                                'type': 'listening_update',
+                                'song_id': song.id,
+                                'listening_users': song.listening_users
+                            }
+                        )
+        except Exception as e:
+            print(f"Error in disconnect: {str(e)}")
+        finally:
+            # Always leave the room group
+            await self.channel_layer.group_discard(
+                self.room_group_name,
+                self.channel_name
+            )
 
     async def receive(self, text_data):
         # Handle incoming messages
@@ -91,6 +130,13 @@ class UploadRoomConsumer(AsyncWebsocketConsumer):
                     )
             except Exception as e:
                 print(f"Error handling listening update: {str(e)}")
+    @database_sync_to_async
+    def get_user(self, user_id):
+        try:
+            return User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return None
+
 
     @database_sync_to_async
     def toggle_like(self, song_id, user_id):
@@ -118,6 +164,24 @@ class UploadRoomConsumer(AsyncWebsocketConsumer):
             return None
 
     @database_sync_to_async
+    def get_room_songs(self):
+        try:
+            if not self.room_id:
+                print("No room_id available")
+                return []
+                
+            # Get the room by room_id
+            print("room_id ----------- > ",self.room_id)
+            room = MusicRoom.objects.get(id=self.room_id)
+            return list(room.songs.all())
+        except MusicRoom.DoesNotExist:
+            print(f"Room not found with room_id: {self.room_id}")
+            return []
+        except Exception as e:
+            print(f"Error getting room songs: {str(e)}")
+            return []
+
+    @database_sync_to_async
     def save_song(self, song):
         song.save()
 
@@ -125,7 +189,7 @@ class UploadRoomConsumer(AsyncWebsocketConsumer):
         # Send song update to WebSocket
         await self.send(text_data=json.dumps({
             'type': 'song_update',
-            'song': event['song']
+            'song': event['song'],
         }))
 
     async def like_update(self, event):
@@ -147,3 +211,4 @@ class UploadRoomConsumer(AsyncWebsocketConsumer):
             'song_id': event['song_id'],
             'listening_users': event['listening_users']
         }))
+        

@@ -29,9 +29,13 @@ class MusicRoomView(APIView):
             room = Room.objects.get(code=room_code)
             music_room, created = MusicRoom.objects.get_or_create(room=room)
             serializer = MusicRoomSerializer(music_room)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            response_data = serializer.data
+            return Response(response_data, status=status.HTTP_201_CREATED)
         except Room.DoesNotExist:
             return Response({"error": "Room not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            print("Error creating music room:", str(e))  # Debug print
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def put(self, request, room_code):
         try:

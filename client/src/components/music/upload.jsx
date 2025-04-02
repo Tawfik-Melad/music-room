@@ -29,7 +29,6 @@ const Uploading = ({ roomCode }) => {
 
         try {
             const response = await request.post(`/api/music-rooms/${roomCode}/songs/`, formData);
-            setCurrentSong(response.data);
             setIsPlaying(true);
             setUploadState('success');
             setTimeout(() => setUploadState('idle'), 2000); // Reset after 2 seconds

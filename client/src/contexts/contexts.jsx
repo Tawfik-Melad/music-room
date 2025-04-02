@@ -47,6 +47,27 @@ export const MainProvider = ({ children }) => {
 
                     return updatedSongs;
                 });
+            } else if (data.type === 'listening_update') {
+                // Update song listening users
+                setSongs(prevSongs => {
+                    const updatedSongs = prevSongs.map(song => {
+                        if (song.id === data.song_id) {
+                            return {
+                                ...song,
+                                listening_users: data.listening_users
+                            };
+                        }
+                        return song;
+                    });
+
+                    // If the updated song is the current song, update it
+                    if (currentSong && currentSong.id === data.song_id) {
+                        const updatedSong = updatedSongs.find(s => s.id === data.song_id);
+                        setCurrentSong(updatedSong);
+                    }
+
+                    return updatedSongs;
+                });
             }
         };
 
@@ -110,7 +131,18 @@ export const MainProvider = ({ children }) => {
         const song = songs.find(s => s.id === songId);
         return song ? song.liked_by?.includes(username) : false;
     };
-    
+
+    const updateListeningStatus = (songId, username, isListening) => {
+        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+            wsRef.current.send(JSON.stringify({
+                type: 'listening_update',
+                song_id: songId,
+                username: username,
+                is_listening: isListening
+            }));
+        }
+    };
+
     return (
         <MainContext.Provider value={{
             users,
@@ -129,7 +161,8 @@ export const MainProvider = ({ children }) => {
             connectToRoom,
             broadcastNewSong,
             toggleLike,
-            isSongLikedByUser
+            isSongLikedByUser,
+            updateListeningStatus
         }}>
             {children}
         </MainContext.Provider>

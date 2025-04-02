@@ -48,7 +48,7 @@ const Room = () => {
         <Navbar user={user} />
           <Song roomCode={room?.code} user={user} />
       <div className='playlist-chat-container'>
-          <Playlist roomCode={room?.code} />
+          <Playlist roomCode={room?.code} user={user} />
           <Chat room={room} user={user} />
       </div>
       <UserStatus room={room} user={user} />

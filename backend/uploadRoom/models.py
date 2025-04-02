@@ -23,7 +23,8 @@ class Song(models.Model):
     room = models.ForeignKey(MusicRoom, on_delete=models.CASCADE, related_name='songs')
     order = models.PositiveIntegerField(default=0)
     liked_by = models.ManyToManyField(User, related_name='liked_songs', blank=True)
-    
+    listening_users = models.JSONField(default=list)  # Track who is listening to each song
+
     def __str__(self):
         return f"{self.file.name} - {self.uploaded_by.username}"
 
@@ -69,5 +70,4 @@ class SongInfo(models.Model):
             os.remove(self.cover_picture.path)  # Delete the file
         super().delete(*args, **kwargs)
    
-
 

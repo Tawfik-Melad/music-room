@@ -4,7 +4,7 @@ import { MainContext } from '../../contexts/contexts';
 import '../../styles/user-status.css';
 
 const UserStatus = ({ room, user }) => {
-  const { users, setUsers } = useContext(MainContext);
+  const { users, setUsers, sendNotification } = useContext(MainContext);
   const ws = useRef(null);
   const [loading, setLoading] = useState(true);
 
@@ -81,6 +81,7 @@ const UserStatus = ({ room, user }) => {
     };
 
     ws.current.onclose = () => {
+      sendNotification(`${user.username} has left the room`, user.username,"leave" );
       console.log('❌ WebSocket Disconnected room');
     };
 

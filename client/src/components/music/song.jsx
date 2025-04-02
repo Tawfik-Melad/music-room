@@ -4,7 +4,8 @@ import { FaPlay, FaPause, FaForward, FaBackward, FaHeart } from "react-icons/fa"
 import "./styles/song.css";
 
 const Song = ({roomCode, user}) => {
-    const { currentSong,setCurrentSong, setIsPlaying, playNextSong, getProfilePicture, toggleLike , isSongLikedByUser} = useContext(MainContext);
+    const { currentSong, setCurrentSong, setIsPlaying,
+        playNextSong, getProfilePicture, toggleLike, isSongLikedByUser, sendNotification } = useContext(MainContext);
     const audioRef = useRef(null);
     const [isPlaying, setPlaying] = useState(false);
     const [progress, setProgress] = useState(0);
@@ -50,6 +51,9 @@ const Song = ({roomCode, user}) => {
     const handleLove = () => {
         toggleLike(currentSong.id, user.id, user.username);
         setLoved(!loved);
+        if(!loved){
+            sendNotification(`${user.username} has loved ${currentSong.info?.title}`, user.username,"like" );
+        }
         // You can send this reaction to the backend if needed
     };
 

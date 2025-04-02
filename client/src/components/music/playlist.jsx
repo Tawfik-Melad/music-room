@@ -122,7 +122,7 @@ const Playlist = ({ roomCode , user }) => {
                             </div>
                         ))
                     )}
-                    <Uploading roomCode={roomCode} />
+                    <Uploading roomCode={roomCode} user={user} />
                 </div>
             </div>
         </>

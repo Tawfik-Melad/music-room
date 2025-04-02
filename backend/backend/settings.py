@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'chat',
     'room',
     'uploadRoom',
+    'customNotifications',
 ]
 
 

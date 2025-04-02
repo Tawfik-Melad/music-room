@@ -5,6 +5,7 @@ from channels.auth import AuthMiddlewareStack
 import chat.routing 
 import room.routing
 import uploadRoom.routing
+import customNotifications.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 application = get_asgi_application()
@@ -17,7 +18,8 @@ application = ProtocolTypeRouter({
         URLRouter(
             chat.routing.websocket_urlpatterns +
             room.routing.websocket_urlpatterns +
-            uploadRoom.routing.websocket_urlpatterns
+            uploadRoom.routing.websocket_urlpatterns +
+            customNotifications.routing.websocket_urlpatterns
         )
     ),
 })

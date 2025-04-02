@@ -3,8 +3,9 @@ import { MainContext } from '../../contexts/contexts';
 import request from '../../pre-request';
 import './styles/upload.css';
 
-const Uploading = ({ roomCode }) => {
-    const { setSongs, setCurrentSong, setIsPlaying, setUploadError, broadcastNewSong } = useContext(MainContext);
+const Uploading = ({ roomCode , user }) => {
+    const { setSongs, setCurrentSong, setIsPlaying,
+        setUploadError, broadcastNewSong, sendNotification } = useContext(MainContext);
     const fileInputRef = useRef(null);
     const [uploadState, setUploadState] = useState('idle'); // idle, loading, success
 
@@ -33,6 +34,7 @@ const Uploading = ({ roomCode }) => {
             setUploadState('success');
             setTimeout(() => setUploadState('idle'), 2000); // Reset after 2 seconds
             broadcastNewSong(response.data);
+            sendNotification(`${user.username} has uploaded a new song`, user.username,"add_song" );
         } catch (error) {
             setUploadError('Failed to upload song');
             setUploadState('idle');

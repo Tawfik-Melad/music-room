@@ -10,8 +10,10 @@ export const MainProvider = ({ children }) => {
     const [uploadError, setUploadError] = useState(null);
     const [uploadRoomId, setUploadRoomId] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
+    const [notifications, setNotifications] = useState([]);
     const audioRef = useRef(null);
     const wsRef = useRef(null);
+    const notificationWsRef = useRef(null);
 
     const connectToRoom = (roomId, userId) => {
         // Close existing connection if any
@@ -83,12 +85,63 @@ export const MainProvider = ({ children }) => {
         };
     };
 
+    const connectToNotifications = (roomId) => {
+        // Close existing notification connection if any
+        if (notificationWsRef.current) {
+            notificationWsRef.current.close();
+        }
+
+        // Create new WebSocket connection for notifications
+        notificationWsRef.current = new WebSocket(`ws://localhost:8000/ws/notifications/${roomId}/`);
+
+        notificationWsRef.current.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            setNotifications(prevNotifications => [...prevNotifications,
+            { message: data.message, username: data.username, action: data.action }]);
+        };
+
+        notificationWsRef.current.onclose = () => {
+            // Attempt to reconnect after 3 seconds
+            setTimeout(() => {
+                if (notificationWsRef.current.readyState === WebSocket.CLOSED) {
+                    connectToNotifications(roomId);
+                }
+            }, 3000);
+        };
+    };
+
+    const sendNotification = (message, username, action) => {
+        console.log('Attempting to send notification:', { message, username, action });
+        console.log('Notification WebSocket state:', notificationWsRef.current?.readyState);
+        
+        if (notificationWsRef.current && notificationWsRef.current.readyState === WebSocket.OPEN) {
+            try {
+                notificationWsRef.current.send(JSON.stringify({
+                    message: message,
+                    username: username,
+                    action: action
+                }));
+                console.log('Notification sent successfully');
+            } catch (error) {
+                console.error('Error sending notification:', error);
+            }
+        } else {
+            console.error('Notification WebSocket not ready or not connected');
+        }
+    };
+
     const clearData = () => {
+        // Send leave notification if we have a current user
+        if (currentUser) {
+            sendNotification(`${currentUser.username} left the room`, currentUser.username, 'leave');
+        }
+
         setUsers([]);
         setSongs([]);
         setCurrentSong(null);
         setIsPlaying(false);
         setUploadError(null);
+        setNotifications([]);
         if (audioRef.current) {
             audioRef.current.pause();
             audioRef.current.currentTime = 0;
@@ -96,6 +149,10 @@ export const MainProvider = ({ children }) => {
         if (wsRef.current) {
             wsRef.current.close();
             wsRef.current = null;
+        }
+        if (notificationWsRef.current) {
+            notificationWsRef.current.close();
+            notificationWsRef.current = null;
         }
     };
     
@@ -168,7 +225,11 @@ export const MainProvider = ({ children }) => {
             uploadRoomId,
             setUploadRoomId,
             currentUser,
-            setCurrentUser
+            setCurrentUser,
+            notifications,
+            setNotifications,
+            connectToNotifications,
+            sendNotification
         }}>
             {children}
         </MainContext.Provider>

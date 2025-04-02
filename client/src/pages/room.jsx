@@ -9,12 +9,13 @@ import Song from '../components/music/song';
 import request from '../pre-request';
 import '../styles/room.css';
 import { MainContext } from '../contexts/contexts';
+import NotificationList from '../components/notification/NotificationList';
 
 const Room = () => {
   const location = useLocation();
   const room = location.state?.room;
   const user = location.state?.user;
-  const { connectToRoom, uploadRoomId ,setUploadRoomId} = useContext(MainContext);
+  const { connectToRoom, uploadRoomId ,setUploadRoomId ,connectToNotifications,sendNotification} = useContext(MainContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -37,6 +38,13 @@ const Room = () => {
               await createUploadRoom();
               if (uploadRoomId) {
                   connectToRoom(uploadRoomId, user.id);
+                  await connectToNotifications(uploadRoomId);
+                  
+                  // Wait a short moment to ensure WebSocket is ready
+                  setTimeout(() => {
+                      sendNotification(`${user.username} has joined the room`, user.username, "join");
+                      console.log('Join notification sent successfully');
+                  }, 1500);
               }
           } catch (error) {
               console.error('Error initializing room:', error);
@@ -65,7 +73,9 @@ const Room = () => {
       </div>
       <UserStatus room={room} user={user} />
               <RoomInfo room={room} />
-
+          <div>
+              <NotificationList />
+        </div>
     </div>
   );
 };

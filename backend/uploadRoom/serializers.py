@@ -12,10 +12,10 @@ class SongSerializer(serializers.ModelSerializer):
     uploaded_by = serializers.StringRelatedField()
     info = SongInfoSerializer(required=False)
     full_url = serializers.SerializerMethodField()
-    
+    liked_by = serializers.StringRelatedField(many=True)
     class Meta:
         model = Song
-        fields = ['id', 'file', 'uploaded_by', 'uploaded_at', 'song_position', 'order', 'info', 'full_url']
+        fields = ['id', 'file', 'uploaded_by', 'uploaded_at', 'liked_by', 'order', 'info', 'full_url']
         read_only_fields = ['uploaded_by', 'uploaded_at', 'order']
 
     def get_full_url(self, obj):

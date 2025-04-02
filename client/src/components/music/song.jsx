@@ -48,8 +48,8 @@ const Song = ({roomCode, user}) => {
     };
 
     const handleLove = () => {
-        setLoved(isSongLikedByUser(currentSong?.id, user.username));
         toggleLike(currentSong.id, user.id, user.username);
+        setLoved(!loved);
         // You can send this reaction to the backend if needed
     };
 

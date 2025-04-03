@@ -5,6 +5,7 @@ import Home  from './pages/home'
 import Login from './pages/login'
 import Register from './pages/register'
 import Room from './pages/room'
+import Profile from './pages/profile'
 import ProtectedRoute from './components/common/protected-route'
 import { MainProvider } from './contexts/contexts'
 
@@ -35,6 +36,7 @@ function App() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/register" element={<RegisterAndLogout />} />
           <Route path="/room" element={<Room />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </BrowserRouter>
     </MainProvider>

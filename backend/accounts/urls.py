@@ -15,5 +15,6 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
     path('get-user/', views.UserProfileDetailView.as_view(), name='get_user'),
+    path('update-profile-picture/', views.UpdateProfilePictureView.as_view(), name='update_profile_picture'),
     
 ]

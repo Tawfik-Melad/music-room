@@ -111,22 +111,14 @@ export const MainProvider = ({ children }) => {
     };
 
     const sendNotification = (message, username, action) => {
-        console.log('Attempting to send notification:', { message, username, action });
-        console.log('Notification WebSocket state:', notificationWsRef.current?.readyState);
-        
+        console.log('hi mother father 2',message, username, action);
         if (notificationWsRef.current && notificationWsRef.current.readyState === WebSocket.OPEN) {
-            try {
-                notificationWsRef.current.send(JSON.stringify({
-                    message: message,
-                    username: username,
-                    action: action
-                }));
-                console.log('Notification sent successfully');
-            } catch (error) {
-                console.error('Error sending notification:', error);
-            }
-        } else {
-            console.error('Notification WebSocket not ready or not connected');
+            console.log('hi mother father 3');
+            notificationWsRef.current.send(JSON.stringify({
+                message: message,
+                username: username,
+                action: action
+            }));
         }
     };
 

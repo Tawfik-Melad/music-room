@@ -28,6 +28,10 @@ const Navbar = ({ user }) => {
     navigate("/login");
   };
 
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+
   const toggleTheme = () => {
     setIsDark(!isDark);
     // You can implement actual theme switching logic here
@@ -69,7 +73,7 @@ const Navbar = ({ user }) => {
               <span className="username">{user?.username || "Guest"}</span>
               <span className="user-status">Online</span>
             </div>
-            <div className="profile-img-container">
+            <div className="profile-img-container" onClick={handleProfileClick} style={{ cursor: 'pointer' }}>
               <img
                 src={user?.profile_picture || "/default-profile.jpg"}
                 className="profile-img"

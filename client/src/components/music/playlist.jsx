@@ -7,7 +7,8 @@ import Uploading from "./upload";
 const Playlist = ({ roomCode , user }) => {
     const { songs, setSongs, setCurrentSong, setIsPlaying,
         getProfilePicture, currentSong, isSongLikedByUser,
-        updateListeningStatus,isUserActive, sendNotification } = useContext(MainContext);
+        updateListeningStatus,isUserActive, sendNotification,
+        broadcastDeleteSong } = useContext(MainContext);
 
     useEffect(() => {
         fetchSongs();
@@ -40,19 +41,27 @@ const Playlist = ({ roomCode , user }) => {
         try {
             const songToDelete = songs.find(song => song.id === songId);
             await request.delete(`/api/music-rooms/${roomCode}/songs/${songId}/`);
+            
             // Remove the deleted song from the local state
             setSongs(songs.filter(song => song.id !== songId));
+            
             // If the deleted song was the current song, clear it
             if (currentSong?.id === songId) {
                 setCurrentSong(null);
                 setIsPlaying(false);
+                // Clear the song from local storage
+                localStorage.removeItem(`song_${songId}`);
             }
+            
             // Send notification about the deleted song
             sendNotification(
                 `deleted "${songToDelete.info?.title || 'Unknown Title'}" from the server`,
                 user.username,
                 'delete_song'
             );
+
+            // Broadcast deletion to other users using the context function
+            broadcastDeleteSong(songId);
         } catch (error) {
             console.error("Failed to delete song");
         }

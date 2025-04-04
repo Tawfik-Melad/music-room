@@ -130,6 +130,17 @@ class UploadRoomConsumer(AsyncWebsocketConsumer):
                     )
             except Exception as e:
                 print(f"Error handling listening update: {str(e)}")
+        elif message_type == 'delete_song':
+            # Handle song deletion
+            print("delete_song ----------- > ",data['song_id'])
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'song_deleted',
+                    'song_id': data['song_id']
+                }
+            )
+
     @database_sync_to_async
     def get_user(self, user_id):
         try:
@@ -210,5 +221,12 @@ class UploadRoomConsumer(AsyncWebsocketConsumer):
             'type': 'listening_update',
             'song_id': event['song_id'],
             'listening_users': event['listening_users']
+        }))
+
+    async def song_deleted(self, event):
+        # Send song deletion event to all clients
+        await self.send(text_data=json.dumps({
+            'type': 'song_deleted',
+            'song_id': event['song_id']
         }))
         

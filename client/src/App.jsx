@@ -35,8 +35,18 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/register" element={<RegisterAndLogout />} />
-          <Route path="/room" element={<Room />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/room" element={
+            <ProtectedRoute>
+              <Room />
+            </ProtectedRoute>
+          }
+          />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+          />
         </Routes>
       </BrowserRouter>
     </MainProvider>

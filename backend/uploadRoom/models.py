@@ -42,10 +42,19 @@ class Song(models.Model):
 
     # Delete file when the song is deleted
     def delete(self, *args, **kwargs):
-        # Check if file exists before deleting
-        if self.file and os.path.isfile(self.file.path):
-            os.remove(self.file.path)  # Delete the file
+        # Get the file path before deleting the model
+        file_path = self.file.path if self.file else None
+        
+        # Delete the model first
         super().delete(*args, **kwargs)
+        
+        # Then delete the file if it exists
+        if file_path and os.path.isfile(file_path):
+            try:
+                os.remove(file_path)
+                print(f"Successfully deleted file: {file_path}")
+            except Exception as e:
+                print(f"Error deleting file {file_path}: {str(e)}")
 
     class Meta:
         ordering = ['order']  # Order songs by their order field by default

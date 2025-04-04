@@ -29,6 +29,17 @@ export const MainProvider = ({ children }) => {
             if (data.type === 'song_update') {
                 // Add new song to the songs list
                 setSongs(prevSongs => [...prevSongs, data.song]);
+            } else if (data.type === 'song_deleted') {
+                // Remove the deleted song from the songs list
+                setSongs(prevSongs => prevSongs.filter(song => song.id !== data.song_id));
+                
+                // If the deleted song was the current song, clear it
+                if (currentSong?.id === data.song_id) {
+                    setCurrentSong(null);
+                    setIsPlaying(false);
+                    // Clear the song from local storage
+                    localStorage.removeItem(`song_${data.song_id}`);
+                }
             } else if (data.type === 'like_update') {
                 // Update song likes count and liked usernames
                 setSongs(prevSongs => {
@@ -167,6 +178,15 @@ export const MainProvider = ({ children }) => {
         }
     };
 
+    const broadcastDeleteSong = (songId) => {
+        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+            wsRef.current.send(JSON.stringify({
+                type: 'delete_song',
+                song_id: songId
+            }));
+        }
+    };
+
     const toggleLike = (songId, userId, username) => {
         if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
             wsRef.current.send(JSON.stringify({
@@ -211,6 +231,7 @@ export const MainProvider = ({ children }) => {
             clearData,
             connectToRoom,
             broadcastNewSong,
+            broadcastDeleteSong,
             toggleLike,
             isSongLikedByUser,
             updateListeningStatus,

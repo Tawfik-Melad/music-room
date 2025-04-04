@@ -52,10 +52,11 @@ const Navbar = ({ user }) => {
         {/* Middle Section */}
         <div className="navbar-middle">
           <div className="music-wave">
-            <div className="wave"></div>
-            <div className="wave"></div>
-            <div className="wave"></div>
-            <div className="wave"></div>
+            <div className="wave-container">
+              {[...Array(20)].map((_, index) => (
+                <div key={index} className="wave-line" />
+              ))}
+            </div>
           </div>
           <span className="navbar-title">Let's Listen Together</span>
         </div>

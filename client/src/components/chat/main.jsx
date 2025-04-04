@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef ,useContext} from 'react';
 import request from '../../pre-request';
 import { MainContext } from '../../contexts/contexts';
-import '../../styles/chat.css';
+import './chat.css';
 
 const Chat = ({room , user}) => {
 
@@ -121,7 +121,10 @@ const Chat = ({room , user}) => {
             {/* Chat Messages */}
             <div className="chat-messages">
                 {messages.length === 0 ? (
-                    <p className="no-messages">No messages yet. Say hi! 👋</p>
+                    <p className="no-messages">
+                        Start the conversation!<br />
+                        <span style={{ fontSize: '14px', color: '#888' }}>Be the first to say hello 👋</span>
+                    </p>
                 ) : (
                     messages.map((msg, idx) => {
                         const isCurrentUser = msg.sender === user.username;

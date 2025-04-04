@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import request from '../../pre-request';
 import { MainContext } from '../../contexts/contexts';
-import '../../styles/user-status.css';
+import './user-status.css';
 
 const UserStatus = ({ room, user }) => {
   const { users, setUsers, sendNotification } = useContext(MainContext);
   const ws = useRef(null);
   const [loading, setLoading] = useState(true);
+  const [isConnected, setIsConnected] = useState(false);
 
   // Initialize all room members as offline
   useEffect(() => {
@@ -29,15 +30,12 @@ const UserStatus = ({ room, user }) => {
               username: member.username,
               status: await fetchUserStatus(member.username),
               profile_picture: member.profile_picture,
-              lastSeen: new Date().toISOString(), // You can replace this with actual last seen data
+              lastSeen: new Date().toISOString(),
             }))
           );
-          console.log("initialUsers -------------- >", initialUsers);
           setUsers(initialUsers);
         } catch (error) {
           console.error("⚠️ Error fetching initial user statuses:", error);
-        } finally {
-          setLoading(false);
         }
       };
 
@@ -49,41 +47,59 @@ const UserStatus = ({ room, user }) => {
   useEffect(() => {
     if (!room.code || !user.username) return;
 
-    ws.current = new WebSocket(
-      `ws://127.0.0.1:8000/ws/status/${room.code}/?user_id=${user.id}`
-    );
+    const connectWebSocket = () => {
+      ws.current = new WebSocket(
+        `ws://127.0.0.1:8000/ws/status/${room.code}/?user_id=${user.id}`
+      );
 
-    ws.current.onmessage = (e) => {
-      const { user: updatedUser, status, profile_picture } = JSON.parse(e.data);
-      setUsers((prevUsers) => {
-        const userExists = prevUsers.find((u) => u.username === updatedUser);
+      ws.current.onopen = () => {
+        console.log('✅ WebSocket Connected');
+        setIsConnected(true);
+        setLoading(false);
+      };
 
-        if (userExists) {
-          return prevUsers.map((u) =>
-            u.username === updatedUser 
-              ? { 
-                  ...u, 
-                  status, 
-                  profile_picture,
-                  lastSeen: status === 'offline' ? new Date().toISOString() : u.lastSeen
-                } 
-              : u
-          );
-        } else {
-          return [...prevUsers, { 
-            username: updatedUser, 
-            status, 
-            profile_picture,
-            lastSeen: new Date().toISOString()
-          }];
-        }
-      });
+      ws.current.onmessage = (e) => {
+        const { user: updatedUser, status, profile_picture } = JSON.parse(e.data);
+        setUsers((prevUsers) => {
+          const userExists = prevUsers.find((u) => u.username === updatedUser);
+
+          if (userExists) {
+            return prevUsers.map((u) =>
+              u.username === updatedUser 
+                ? { 
+                    ...u, 
+                    status, 
+                    profile_picture,
+                    lastSeen: status === 'offline' ? new Date().toISOString() : u.lastSeen
+                  } 
+                : u
+            );
+          } else {
+            return [...prevUsers, { 
+              username: updatedUser, 
+              status, 
+              profile_picture,
+              lastSeen: new Date().toISOString()
+            }];
+          }
+        });
+      };
+
+      ws.current.onclose = () => {
+        setIsConnected(false);
+        sendNotification(`${user.username} has left the room`, user.username, "leave");
+        console.log('❌ WebSocket Disconnected');
+        // Attempt to reconnect after 3 seconds
+        setTimeout(connectWebSocket, 3000);
+      };
+
+      ws.current.onerror = (error) => {
+        console.error('⚠️ WebSocket Error:', error);
+        setIsConnected(false);
+      };
     };
 
-    ws.current.onclose = () => {
-      sendNotification(`${user.username} has left the room`, user.username,"leave" );
-      console.log('❌ WebSocket Disconnected room');
-    };
+    connectWebSocket();
 
     return () => {
       if (ws.current) {
@@ -92,38 +108,58 @@ const UserStatus = ({ room, user }) => {
     };
   }, [room.code, user]);
 
-  if (loading) {
+  if (loading || !isConnected) {
     return (
-      <div className="user-list">
-        {[1, 2, 3].map((n) => (
-          <div key={n} className="user-card skeleton">
-            <div className="profile-container">
-              <div className="profile-pic-skeleton"></div>
+      <div className="user-status-container">
+        <div className="room-header">
+          <div className="room-code">Room: <span className="skeleton-text"></span></div>
+        </div>
+        <div className="user-list">
+          {[1, 2, 3].map((n) => (
+            <div key={n} className="user-card skeleton">
+              <div className="profile-container">
+                <div className="profile-pic-skeleton"></div>
+              </div>
             </div>
+          ))}
+        </div>
+        {!isConnected && (
+          <div className="connection-status">
+            <div className="connecting-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <p>Connecting to real-time updates...</p>
           </div>
-        ))}
+        )}
       </div>
     );
   }
 
   return (
-    <div className="user-list">
-      {users.map((user) => (
-        <div
-          key={user.username}
-          className={`user-card ${user.status === "online" ? "online" : "offline"}`}
-        >
-          <div className="profile-container">
-            <img 
-              src={user.profile_picture || '/default-avatar.png'} 
-              alt={user.username} 
-              className="profile-pic"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = '/default-avatar.png';
-              }}
-            />
-            <span className="status-dot"></span>
+    <div className="user-status-container">
+      <div className="room-header">
+        <div className="room-code">Room: {room.code}</div>
+      </div>
+      <div className="user-list">
+        {users.map((user) => (
+          <div
+            key={user.username}
+            className={`user-card ${user.status === "online" ? "online" : "offline"} ${user.username === room.host?.username ? "host" : ""}`}
+          >
+            <div className="profile-container">
+              <img 
+                src={user.profile_picture || '/default-avatar.png'} 
+                alt={user.username} 
+                className="profile-pic"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/default-avatar.png';
+                }}
+              />
+              <span className="status-dot"></span>
+            </div>
             <div className="username">
               {user.username}
               {user.status === "offline" && (
@@ -133,8 +169,8 @@ const UserStatus = ({ room, user }) => {
               )}
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };

@@ -87,6 +87,10 @@
     color: #4bff4b;
 }
 
+.notification-item.delete_song .notification-action-icon {
+    color: #F2A03D;
+}
+
 /* Border colors for profile picture */
 .notification-item.like .notification-profile img {
     border: 2px solid #ff4b6e;
@@ -102,6 +106,10 @@
 
 .notification-item.join .notification-profile img {
     border: 2px solid #4bff4b;
+}
+
+.notification-item.delete_song .notification-profile img {
+    border: 2px solid #F2A03D;
 }
 
 @keyframes slideIn {

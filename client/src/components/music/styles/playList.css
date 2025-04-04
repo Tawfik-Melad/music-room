@@ -451,15 +451,22 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 30px 20px;
+    padding: 20px;
     text-align: center;
     color: #666;
-    height: 100%;
+    height: auto;
+    min-height: 200px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease-out forwards;
 }
 
 .empty-illustration {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     position: relative;
+    opacity: 0;
+    transform: scale(0.8);
+    animation: scaleIn 0.5s ease-out 0.2s forwards;
 }
 
 .empty-illustration svg {
@@ -502,26 +509,131 @@
 }
 
 .empty-playlist h3 {
-    font-size: 22px;
+    font-size: 18px;
     color: #f2a03d;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     font-weight: 600;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInUp 0.4s ease-out 0.4s forwards;
 }
 
 .empty-playlist p {
     font-size: 14px;
-    margin: 4px 0;
+    margin: 2px 0;
     color: #666;
     line-height: 1.4;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInUp 0.4s ease-out 0.5s forwards;
 }
 
 .empty-tip {
     font-size: 13px;
     color: #888;
     font-style: italic;
-    margin-top: 12px;
+    margin-top: 8px;
     background: rgba(242, 160, 61, 0.1);
-    padding: 6px 12px;
+    padding: 4px 12px;
     border-radius: 16px;
     display: inline-block;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInUp 0.4s ease-out 0.6s forwards;
+}
+
+.delete-song-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0;
+    z-index: 2;
+    padding: 0;
+}
+
+.song-item:hover .delete-song-btn {
+    opacity: 1;
+}
+
+.delete-song-btn:hover {
+    background: #ff4b4b;
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .delete-song-btn {
+        opacity: 0.7;
+        background: rgba(255, 255, 255, 0.95);
+        width: 35px;
+        height: 35px;
+    }
+
+    .delete-song-btn:active {
+        background: #ff4b4b;
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .song-item {
+        position: relative;
+    }
+
+    .empty-playlist {
+        padding: 15px;
+        min-height: 150px;
+    }
+
+    .empty-illustration {
+        margin-bottom: 8px;
+    }
+
+    .empty-playlist h3 {
+        font-size: 16px;
+        margin-bottom: 2px;
+    }
+
+    .empty-playlist p {
+        font-size: 12px;
+        margin: 1px 0;
+    }
+
+    .empty-tip {
+        font-size: 12px;
+        margin-top: 6px;
+        padding: 3px 10px;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }

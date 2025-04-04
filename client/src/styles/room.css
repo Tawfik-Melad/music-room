@@ -1,28 +1,132 @@
 .room-wrapper {
     display: flex;
     flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    background: #f5f5f5;
+    overflow: hidden;
+}
 
+.room-main-content {
+    display: flex;
+    flex: 0.4;
+    gap: 20px;
+    padding: 20px;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.room-left-section {
+    flex: 3;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.room-right-section {
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.room-bottom-section {
+    flex: 0.6;
+    min-height: 0;
+    padding: 0 20px 20px;
     overflow: hidden;
 }
 
 .playlist-chat-container {
     display: flex;
-    flex-direction: row;
     gap: 20px;
-    padding: 20px;
-    height: calc(100vh - 100px);
-    min-height: 400px;
+    height: 100%;
+    min-height: 0;
 }
 
 .playlist-chat-container > * {
     flex: 1;
-    width: 50%;
     min-width: 0;
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    height: 100%;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 1024px) {
+    .room-main-content {
+        flex-direction: column;
+        padding: 15px;
+        flex: 0.3;
+    }
+
+    .room-left-section {
+        flex: none;
+        height: auto;
+    }
+
+    .room-right-section {
+        flex: none;
+        min-width: 100%;
+        max-width: none;
+        flex-direction: row;
+        gap: 15px;
+    }
+
+    .room-bottom-section {
+        padding: 0 15px 15px;
+        flex: 0.7;
+    }
+}
+
+@media (max-width: 768px) {
+    .room-wrapper {
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+
+    .room-main-content {
+        padding: 10px;
+        min-height: 0;
+        flex: none;
+    }
+
+    .room-right-section {
+        flex-direction: column;
+    }
+
+    .playlist-chat-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .playlist-chat-container > * {
+        height: 60vh;
+        min-height: 400px;
+    }
+
+    .room-bottom-section {
+        padding: 0 10px 10px;
+        flex: none;
+    }
+}
+
+/* Ensure proper scrolling */
+.room-wrapper > * {
+    overflow: hidden;
+}
+
+/* Smooth transitions */
+.room-main-content,
+.room-left-section,
+.room-right-section,
+.room-bottom-section,
+.playlist-chat-container {
+    transition: all 0.3s ease;
 }
 
 /* Scrollbar styling */
@@ -42,31 +146,4 @@
 
 .playlist-chat-container > *::-webkit-scrollbar-thumb:hover {
     background: #555;
-}
-
-/* Mobile Responsive Design */
-@media (max-width: 768px) {
-
-
-    .playlist-chat-container {
-        flex-direction: column;
-        padding: 10px;
-        gap: 10px;
-        height: auto;
-        min-height: auto;
-    }
-
-    .playlist-chat-container > * {
-        width: 100%;
-        height: auto;
-        min-height: 300px;
-    }
-
-    .playlist-chat-container > *:first-child {
-        order: 1;
-    }
-
-    .playlist-chat-container > *:last-child {
-        order: 2;
-    }
 }

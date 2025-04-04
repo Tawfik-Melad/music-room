@@ -1,0 +1,236 @@
+/* Chat Container */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    max-height: 100vh; /* Ensure it doesn't exceed viewport height */
+}
+
+/* Messages List */
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #f8f8f8;
+    height: calc(100% - 60px);
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* No Messages Text */
+.no-messages {
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+    margin: auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    transform: translateY(0);
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.no-messages::before {
+    content: "💬";
+    font-size: 32px;
+    margin-bottom: 8px;
+    animation: wave 2s infinite;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes wave {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-10deg);
+    }
+    75% {
+        transform: rotate(10deg);
+    }
+}
+
+/* Message Wrapper */
+.message-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    max-width: 75%;
+}
+
+/* Sent Messages (Current User) */
+.sent {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+/* Received Messages (Other Users) */
+.received {
+    align-self: flex-start;
+}
+
+/* Message Content */
+.message-content {
+    background: #1D4D4F;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 14px;
+    position: relative;
+    max-width: 100%;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+/* Sent Messages Styling (Your Messages) */
+.sent .message-content {
+    background: #f2a03d;
+    color: white;
+    border-radius: 16px 16px 0px 16px;
+}
+
+/* Received Messages Styling */
+.received .message-content {
+    background: #1D4D4F;
+    color: white;
+    border-radius: 16px 16px 16px 0px;
+}
+
+/* Sender Name (For Received Messages) */
+.sender-name {
+    font-size: 12px;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 4px;
+}
+
+/* Timestamp */
+.timestamp {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 4px;
+    display: block;
+    text-align: right;
+}
+
+/* Scoped Profile Picture */
+.chat-container .profile-pic {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Input Box */
+.chat-input {
+    display: flex;
+    padding: 10px;
+    background: white;
+    border-top: 1px solid #ddd;
+    height: 60px;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    background: #f0f0f0;
+}
+
+.chat-input button {
+    background: #f2a03d;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    margin-left: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.chat-input button:hover {
+    background: #e08a2e;
+}
+
+/* Make it Responsive */
+@media (max-width: 768px) {
+    .chat-container {
+        height: 100%;
+        max-height: 100vh;
+    }
+
+    .chat-messages {
+        padding: 15px;
+        height: calc(100% - 60px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Ensure messages don't overflow on mobile */
+    .message-wrapper {
+        max-width: 85%;
+    }
+
+    .message-content {
+        font-size: 12px;
+        padding: 8px 12px;
+        max-width: 100%;
+        word-break: break-word;
+    }
+
+    .chat-input {
+        padding: 8px;
+    }
+
+    .chat-input input {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .chat-input button {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+}
+
+/* Message Text */
+.message-text {
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}

@@ -1,6 +1,6 @@
 .now-playing {
     width: 100%;
-    max-width: 1000px;
+    max-width: 97%;
     background: #fff;
     padding: 20px;
     border-radius: 12px;
@@ -10,6 +10,7 @@
     gap: 20px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     margin: auto;
+    flex: 1;
 }
 
 .song-details {

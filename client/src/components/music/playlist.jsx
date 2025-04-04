@@ -7,7 +7,7 @@ import Uploading from "./upload";
 const Playlist = ({ roomCode , user }) => {
     const { songs, setSongs, setCurrentSong, setIsPlaying,
         getProfilePicture, currentSong, isSongLikedByUser,
-        updateListeningStatus,isUserActive } = useContext(MainContext);
+        updateListeningStatus,isUserActive, sendNotification } = useContext(MainContext);
 
     useEffect(() => {
         fetchSongs();
@@ -36,6 +36,28 @@ const Playlist = ({ roomCode , user }) => {
         setIsPlaying(true);
     };
 
+    const handleDeleteSong = async (songId) => {
+        try {
+            const songToDelete = songs.find(song => song.id === songId);
+            await request.delete(`/api/music-rooms/${roomCode}/songs/${songId}/`);
+            // Remove the deleted song from the local state
+            setSongs(songs.filter(song => song.id !== songId));
+            // If the deleted song was the current song, clear it
+            if (currentSong?.id === songId) {
+                setCurrentSong(null);
+                setIsPlaying(false);
+            }
+            // Send notification about the deleted song
+            sendNotification(
+                `deleted "${songToDelete.info?.title || 'Unknown Title'}" from the server`,
+                user.username,
+                'delete_song'
+            );
+        } catch (error) {
+            console.error("Failed to delete song");
+        }
+    };
+
     return (
         <>
             <div className="playlist-container">
@@ -54,8 +76,6 @@ const Playlist = ({ roomCode , user }) => {
                                 </svg>
                             </div>
                             <h3>No Songs Yet</h3>
-                            <p>Be the first to add some music to this playlist!</p>
-                            <p className="empty-tip">Use the upload button below to add your favorite tracks 🎵</p>
                         </div>
                     ) : (
                         songs.map((song) => (
@@ -85,7 +105,8 @@ const Playlist = ({ roomCode , user }) => {
                                                     <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
                                                     <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
                                                 </svg>
-                                            </span>                                            {song.listening_users.slice(0, 3).map((user, index) => (
+                                            </span>
+                                            {song.listening_users.slice(0, 3).map((user, index) => (
                                                 <div key={index} className="listening-user-avatar">
                                                     <img src={getProfilePicture(user)} alt="Profile" />
                                                 </div>
@@ -119,6 +140,19 @@ const Playlist = ({ roomCode , user }) => {
                                         </div>
                                     </div>
                                 </div>
+                                {(!song.listening_users || song.listening_users.length === 0) && (
+                                    <button 
+                                        className="delete-song-btn"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDeleteSong(song.id);
+                                        }}
+                                    >
+                                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                        </svg>
+                                    </button>
+                                )}
                             </div>
                         ))
                     )}

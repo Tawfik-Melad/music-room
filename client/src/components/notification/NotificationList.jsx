@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { MainContext } from '../../contexts/contexts';
-import { FaHeart, FaMusic, FaDoorOpen, FaUserPlus } from 'react-icons/fa';
+import { FaHeart, FaMusic, FaDoorOpen, FaUserPlus, FaTrash } from 'react-icons/fa';
 import './notifications-style.css';
 
 const NotificationList = () => {
@@ -18,6 +18,8 @@ const NotificationList = () => {
                 return <FaDoorOpen />;
             case 'join':
                 return <FaUserPlus />;
+            case 'delete_song':
+                return <FaTrash />;
             default:
                 return <FaUserPlus />;
         }

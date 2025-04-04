@@ -25,7 +25,6 @@ const RegisterForm = () => {
       const response = await request.post('/accounts/register/', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      console.log('Success:', response.data);
       navigate("/login");
     } catch (err) {
       if (err.response) {

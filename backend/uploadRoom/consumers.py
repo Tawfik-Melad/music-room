@@ -132,7 +132,6 @@ class UploadRoomConsumer(AsyncWebsocketConsumer):
                 print(f"Error handling listening update: {str(e)}")
         elif message_type == 'delete_song':
             # Handle song deletion
-            print("delete_song ----------- > ",data['song_id'])
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
@@ -178,15 +177,12 @@ class UploadRoomConsumer(AsyncWebsocketConsumer):
     def get_room_songs(self):
         try:
             if not self.room_id:
-                print("No room_id available")
                 return []
                 
             # Get the room by room_id
-            print("room_id ----------- > ",self.room_id)
             room = MusicRoom.objects.get(id=self.room_id)
             return list(room.songs.all())
         except MusicRoom.DoesNotExist:
-            print(f"Room not found with room_id: {self.room_id}")
             return []
         except Exception as e:
             print(f"Error getting room songs: {str(e)}")

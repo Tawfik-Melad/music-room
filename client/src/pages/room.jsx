@@ -80,7 +80,6 @@ const Room = () => {
             
             setTimeout(() => {
               sendNotification(`${userData.username} has joined the room`, userData.username, "join");
-              console.log('Join notification sent successfully');
             }, 1500);
           }
         } catch (error) {

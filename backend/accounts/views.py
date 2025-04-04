@@ -13,8 +13,6 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
     def create(self, request, *args, **kwargs):
-        print("DATA:", request.data)
-        print("FILES:", request.FILES)
         return super().create(request, *args, **kwargs)
 
 class UserProfileDetailView(generics.RetrieveAPIView):

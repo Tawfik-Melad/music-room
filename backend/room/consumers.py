@@ -33,7 +33,6 @@ class UserStatusConsumer(AsyncWebsocketConsumer):
             await self.close()
             return
         
-        print(f"🔗 Connected as ->: {self.user.username}")
 
         # Set user as connected and add to room members
         await self.set_user_status(True)
@@ -47,7 +46,6 @@ class UserStatusConsumer(AsyncWebsocketConsumer):
         
         # Get profile picture URL safely
         self.profile_picture = await self.get_profile_picture()
-        print("profile_picture -------------- >", self.profile_picture)
 
         # Notify others that the user is online
         await self.channel_layer.group_send(
@@ -64,7 +62,6 @@ class UserStatusConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         if hasattr(self, 'user'):
-            print(f"🔗 Disconnected as: {self.user.username}")
             # Set user as disconnected
             await self.set_user_status(False)
             
@@ -123,11 +120,8 @@ class UserStatusConsumer(AsyncWebsocketConsumer):
         try:
             # Check if user is already a member
             if not self.room.members.filter(id=self.user.id).exists():
-                print(f"➕ Adding {self.user.username} to room {self.room.code}")
                 self.room.members.add(self.user)
                 self.room.save()
-            else:
-                print(f"✅ {self.user.username} is already a member of room {self.room.code}")
             return True
         except Exception as e:
             print(f"⚠️ Error adding user to room: {str(e)}")

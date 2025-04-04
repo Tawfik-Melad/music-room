@@ -53,7 +53,6 @@ const UserStatus = ({ room, user }) => {
       );
 
       ws.current.onopen = () => {
-        console.log('✅ WebSocket Connected');
         setIsConnected(true);
         setLoading(false);
       };
@@ -88,8 +87,6 @@ const UserStatus = ({ room, user }) => {
       ws.current.onclose = () => {
         setIsConnected(false);
         sendNotification(`${user.username} has left the room`, user.username, "leave");
-        console.log('❌ WebSocket Disconnected');
-        // Attempt to reconnect after 3 seconds
         setTimeout(connectWebSocket, 3000);
       };
 

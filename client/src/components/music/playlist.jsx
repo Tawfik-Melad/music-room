@@ -17,7 +17,6 @@ const Playlist = ({ roomCode , user }) => {
     const fetchSongs = async () => {
         try {
             const response = await request.get(`/api/music-rooms/${roomCode}/songs/`);
-            console.log("response.data", response.data);
             setSongs(response.data);
         } catch (error) {
             console.error("Failed to fetch songs");

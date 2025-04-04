@@ -22,7 +22,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         # Create user with hashed password
         user = User.objects.create_user(**validated_data)
         # Create profile with profile_picture if provided
-        print("the profile photo",profile_picture)
         Profile.objects.create(user=user, profile_picture=profile_picture)
         return user
     

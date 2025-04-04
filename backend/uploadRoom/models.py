@@ -52,7 +52,6 @@ class Song(models.Model):
         if file_path and os.path.isfile(file_path):
             try:
                 os.remove(file_path)
-                print(f"Successfully deleted file: {file_path}")
             except Exception as e:
                 print(f"Error deleting file {file_path}: {str(e)}")
 

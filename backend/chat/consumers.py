@@ -22,12 +22,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         try:
             self.user = await self.get_user(user_id)
         except User.DoesNotExist:
-            print("❌ User not found")
             await self.close()
             return
         
-        print(f"🔗 Connected to room: {user_id}")
-
         # Add user to the room group
         await self.channel_layer.group_add(
             self.room_group_name,

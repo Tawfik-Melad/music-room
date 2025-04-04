@@ -16,7 +16,6 @@ const LoginForm = () => {
             const response = await request.post(route, { username, password });
             localStorage.setItem(ACCESS_TOKEN, response.data.access);
             localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
-            console.log('Login successful:', response);
             navigate("/");
         } catch (err) {
             setError('Login failed. Please check your credentials and try again.');

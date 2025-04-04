@@ -83,8 +83,7 @@ class SongView(APIView):
             
             # Handle file upload
             file_obj = request.FILES.get('file')
-            print("file_obj ->",file_obj.name)
-            print(type(file_obj.name))
+
             if not file_obj:
                 return Response({"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
 

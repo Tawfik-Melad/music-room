@@ -122,9 +122,7 @@ export const MainProvider = ({ children }) => {
     };
 
     const sendNotification = (message, username, action) => {
-        console.log('hi mother father 2',message, username, action);
         if (notificationWsRef.current && notificationWsRef.current.readyState === WebSocket.OPEN) {
-            console.log('hi mother father 3');
             notificationWsRef.current.send(JSON.stringify({
                 message: message,
                 username: username,

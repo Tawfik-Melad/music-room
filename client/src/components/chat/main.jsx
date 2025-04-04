@@ -33,14 +33,12 @@ const Chat = ({room , user}) => {
     const ws = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${room.code}/?user_id=${user.id}`);
 
     ws.onopen = () => {
-      console.log('✅ Connected to WebSocket');
       setSocket(ws);
       setIsConnected(true);
     };
 
     ws.onmessage = (e) => {
       const data = JSON.parse(e.data);
-      console.log('📩 Message Received:', data.message);
 
       setMessages((prev) => [
         ...prev,

@@ -147,6 +147,53 @@
     object-fit: cover;
     border: 2px solid white;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Online Status Indicator */
+.chat-container .profile-pic.online {
+    border: 2px solid #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3);
+}
+
+.chat-container .profile-pic.offline {
+    filter: grayscale(100%);
+    opacity: 0.7;
+}
+
+/* Online Status Dot */
+.chat-container .profile-pic::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #4CAF50;
+    border: 2px solid white;
+    display: none;
+}
+
+.chat-container .profile-pic.online::after {
+    display: block;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 /* Input Box */

@@ -1,5 +1,5 @@
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import Chat from '../components/chat/main';
 import UserStatus from '../components/user-status/main';
 import Navbar from '../components/common/navbar';
@@ -15,81 +15,92 @@ import NotificationList from '../components/notification/NotificationList';
 
 const Room = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const [roomData, setRoomData] = useState(null);
-  const [userData, setUserData] = useState(null);
+  const { room, user } = location.state || {};
+  const { 
+    connectToRoom, 
+    uploadRoomId, 
+    setUploadRoomId, 
+    connectToNotifications, 
+    sendNotification 
+  } = useContext(MainContext);
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { connectToRoom, uploadRoomId, setUploadRoomId, connectToNotifications, sendNotification } = useContext(MainContext);
-
-  useEffect(() => {
-    const initializeData = async () => {
-      try {
-        // If we have state from navigation, use it
-        if (location.state?.room && location.state?.user) {
-          setRoomData(location.state.room);
-          setUserData(location.state.user);
-        } else {
-          // If accessed directly, fetch the necessary data
-          const userResponse = await request.get('/accounts/get-user/');
-          setUserData(userResponse.data);
-
-          // Extract room code from URL if possible, otherwise redirect to home
-          const pathParts = location.pathname.split('/');
-          const roomCode = pathParts[pathParts.length - 1];
-          
-          if (roomCode) {
-            const roomResponse = await request.get(`/room/get/${roomCode}/`);
-            setRoomData(roomResponse.data);
-          } else {
-            navigate('/');
-            return;
-          }
-        }
-        setLoading(false);
-      } catch (error) {
-        console.error('Error initializing room:', error);
-        setError('Failed to load room data');
-        setLoading(false);
-        // Redirect to home page after a short delay
-        setTimeout(() => navigate('/'), 2000);
-      }
-    };
-
-    initializeData();
-  }, [location, navigate]);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const initTimeout = useRef(null);
 
   const createUploadRoom = async () => {
     try {
-      const response = await request.post(`/api/music-rooms/${roomData?.code}/`);
+      const response = await request.post(`/api/music-rooms/${room?.code}/`);
       setUploadRoomId(response.data.id);
+      console.log("Upload room created:", response.data.id);
+      return true;
     } catch (error) {
       console.error('Error creating upload room:', error);
-      setError('No room found');
+      setError('Failed to create upload room.');
+      return false;
     }
   };
 
   useEffect(() => {
-    if (roomData && userData) {
-      const initializeRoom = async () => {
-        try {
-          await createUploadRoom();
-          if (uploadRoomId) {
-            connectToRoom(uploadRoomId, userData.id);
-            await connectToNotifications(uploadRoomId);
-            
-            setTimeout(() => {
-              sendNotification(`${userData.username} has joined the room`, userData.username, "join");
-            }, 1500);
-          }
-        } catch (error) {
-          console.error('Error initializing room:', error);
-        }
-      };
+    let mounted = true;
 
-      initializeRoom();
+    const initializeRoom = async () => {
+      if (!room || !user || isInitialized) return;
+
+      try {
+        setLoading(true);
+        const uploadRoomCreated = await createUploadRoom();
+        
+        if (!uploadRoomCreated) return;
+
+        if (uploadRoomId) {
+          // Connect to room with a small delay to ensure proper initialization
+          await new Promise(resolve => setTimeout(resolve, 500));
+          await connectToRoom(uploadRoomId, user.id);
+          
+          // Connect to notifications with a small delay
+          await new Promise(resolve => setTimeout(resolve, 500));
+          await connectToNotifications(uploadRoomId);
+          console.log("Connected to notifications");
+
+          // Wait 1 seconds before sending notification
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          // Send join notification after connections are established
+          if (mounted) {
+            console.log("Sending join notification");
+            sendNotification(`${user.username} has joined the room`, user.username, "join");
+            setIsInitialized(true);
+          }
+        }
+      } catch (error) {
+        console.error('Error initializing room:', error);
+        if (mounted) {
+          setError('Failed to initialize room.');
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    // Clear any existing timeout
+    if (initTimeout.current) {
+      clearTimeout(initTimeout.current);
     }
-  }, [uploadRoomId, roomData, userData]);
+
+    // Add a small delay before initialization
+    initTimeout.current = setTimeout(initializeRoom, 100);
+
+    return () => {
+      mounted = false;
+      if (initTimeout.current) {
+        clearTimeout(initTimeout.current);
+      }
+    };
+  }, [room?.code, user?.id, uploadRoomId, isInitialized]);
 
   if (loading) {
     return <LoadingScreen />;
@@ -106,25 +117,25 @@ const Room = () => {
     );
   }
 
-  if (!roomData || !userData) {
+  if (!room || !user) {
     return <p>Redirecting to home page...</p>;
   }
 
   return (
     <div className="room-wrapper">
-      <Navbar user={userData} />
+      <Navbar user={user} />
       <div className="room-main-content">
         <div className="room-left-section">
-          <Song roomCode={roomData?.code} user={userData} />
+          <Song roomCode={room?.code} user={user} />
         </div>
         <div className="room-right-section">
-          <UserStatus room={roomData} user={userData} />
+          <UserStatus room={room} user={user} />
         </div>
       </div>
       <div className="room-bottom-section">
         <div className="playlist-chat-container">
-          <Playlist roomCode={roomData?.code} user={userData} />
-          <Chat room={roomData} user={userData} />
+          <Playlist roomCode={room?.code} user={user} />
+          <Chat room={room} user={user} />
         </div>
       </div>
       <NotificationList />

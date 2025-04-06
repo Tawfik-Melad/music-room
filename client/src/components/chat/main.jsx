@@ -1,26 +1,30 @@
-import { useEffect, useState, useRef ,useContext} from 'react';
+import { useEffect, useState, useRef, useContext } from 'react';
 import request from '../../pre-request';
 import { MainContext } from '../../contexts/contexts';
 import './chat.css';
 
-const Chat = ({room , user}) => {
-
+const Chat = ({ room, user }) => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
-  const [socket, setSocket] = useState(null);
+  const socketRef = useRef(null);
   const messageEndRef = useRef(null);
   const [isConnected, setIsConnected] = useState(false);
   const { isUserActive, getProfilePicture } = useContext(MainContext);
+  const reconnectAttempts = useRef(0);
+  const maxReconnectAttempts = 5;
+  const reconnectTimeout = useRef(null);
+
+  // Load initial messages
   useEffect(() => {
-      if (room?.messages) {
-        const messageObjects = room.messages.map((msg) => ({
-          sender: msg.user.username,          // Add sender
-          content: msg.content,        // Add content
-          timestamp: msg.timestamp,    // Add timestamp
-        })); 
-        setMessages(messageObjects);
-      }
-    }, []); 
+    if (room?.messages) {
+      const messageObjects = room.messages.map((msg) => ({
+        sender: msg.user.username,
+        content: msg.content,
+        timestamp: msg.timestamp,
+      }));
+      setMessages(messageObjects);
+    }
+  }, [room?.messages]);
 
   // Scroll to bottom on new messages
   useEffect(() => {
@@ -29,56 +33,101 @@ const Chat = ({room , user}) => {
 
   // Initialize WebSocket
   useEffect(() => {
-    if (!room) return;
-    const ws = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${room.code}/?user_id=${user.id}`);
+    if (!room?.code || !user?.id) return;
 
-    ws.onopen = () => {
-      setSocket(ws);
-      setIsConnected(true);
+    const connectWebSocket = () => {
+      // Clean up any existing connection
+      if (socketRef.current) {
+        console.log('🔄 Cleaning up existing WebSocket connection');
+        socketRef.current.close(1000, 'Reconnecting');
+        socketRef.current = null;
+      }
+
+      try {
+        console.log('🔄 Attempting to connect to chat WebSocket...');
+        const ws = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${room.code}/?user_id=${user.id}`);
+
+        ws.onopen = () => {
+          console.log('🟢 Chat WebSocket connected successfully');
+          socketRef.current = ws;
+          setIsConnected(true);
+          reconnectAttempts.current = 0;
+        };
+
+        ws.onmessage = (e) => {
+          try {
+            const data = JSON.parse(e.data);
+            setMessages((prev) => [
+              ...prev,
+              {
+                sender: data.message.sender,
+                content: data.message.content,
+                timestamp: data.message.timestamp,
+              },
+            ]);
+          } catch (error) {
+            console.error('⚠️ Error parsing chat message:', error);
+          }
+        };
+
+        ws.onclose = (event) => {
+          console.log('🔴 Chat WebSocket closed:', event.code, event.reason);
+          setIsConnected(false);
+          
+          // Attempt to reconnect if not closed normally
+          if (event.code !== 1000 && reconnectAttempts.current < maxReconnectAttempts) {
+            reconnectAttempts.current += 1;
+            console.log(`Attempting to reconnect chat (${reconnectAttempts.current}/${maxReconnectAttempts})...`);
+            reconnectTimeout.current = setTimeout(connectWebSocket, 2000 * reconnectAttempts.current);
+          }
+        };
+
+        ws.onerror = (error) => {
+          console.error('⚠️ Chat WebSocket Error:', error);
+          setIsConnected(false);
+        };
+      } catch (error) {
+        console.error('⚠️ Error creating chat WebSocket:', error);
+        setIsConnected(false);
+      }
     };
 
-    ws.onmessage = (e) => {
-      const data = JSON.parse(e.data);
+    // Add a small delay before connecting
+    const timeoutId = setTimeout(connectWebSocket, 500);
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          sender: data.message.sender,
-          content: data.message.content,
-          timestamp: data.message.timestamp,
-        },
-      ]);
+    return () => {
+      clearTimeout(timeoutId);
+      if (reconnectTimeout.current) {
+        clearTimeout(reconnectTimeout.current);
+      }
+      if (socketRef.current) {
+        socketRef.current.close(1000, 'Component unmounting');
+      }
     };
-
-    ws.onclose = () => {
-      setIsConnected(false);
-    };
-
-    ws.onerror = (error) => {
-      console.log('⚠️ WebSocket Error:', error);
-    };
-
-    return () => ws.close();
-  }, [room]);
+  }, [room?.code, user?.id]);
 
   // Send Message
   const sendMessage = async () => {
-    if (socket && inputMessage.trim() !== '') {
-      const response = await request.post('/message/create/', {
-        room_code: room.code,
-        content: inputMessage,
-      });
-
-      const messageData = {
-        type: "chat_message",
-        message: {
-          sender: user.username,
+    if (socketRef.current && inputMessage.trim() !== '') {
+      try {
+        const response = await request.post('/message/create/', {
+          room_code: room.code,
           content: inputMessage,
-          timestamp: new Date().toISOString(),
-        },
-      };
-      socket.send(JSON.stringify(messageData));
-      setInputMessage('');
+        });
+
+        const messageData = {
+          type: "chat_message",
+          message: {
+            sender: user.username,
+            content: inputMessage,
+            timestamp: new Date().toISOString(),
+          },
+        };
+        socketRef.current.send(JSON.stringify(messageData));
+        setInputMessage('');
+      } catch (error) {
+        console.error('⚠️ Error sending message:', error);
+      }
     }
   };
 
@@ -115,58 +164,57 @@ const Chat = ({room , user}) => {
   }
 
   return (
-            <div className="chat-container">
-            {/* Chat Messages */}
-            <div className="chat-messages">
-                {messages.length === 0 ? (
-                    <p className="no-messages">
-                        Start the conversation!<br />
-                        <span style={{ fontSize: '14px', color: '#888' }}>Be the first to say hello 👋</span>
-                    </p>
-                ) : (
-                    messages.map((msg, idx) => {
-                        const isCurrentUser = msg.sender === user.username;
-                        return (
-                            <div key={idx} className={`message-wrapper ${isCurrentUser ? "sent" : "received"}`}>
-                                {!isCurrentUser && (
-                                    <img
-                                        className="profile-pic"
-                                        src={getProfilePicture(msg.sender) || "/default-avatar.png"}
-                                        alt={`${msg.sender}'s profile`}
-                                    />
-                                )}
-                                <div className="message-content">
-                                    {!isCurrentUser && (
-                                        <span className="sender-name">
-                                            {msg.sender}
-                                            {isUserActive(msg.sender) ? " 🟢" : " ⚫"}
-                                        </span>
-                                    )}
-                                    <div className="message-text">{msg.content}</div>
-                                    <span className="timestamp">
-                                        {formatTime(msg.timestamp)}
-                                    </span>
-                                </div>
-                            </div>
-                        );
-                    })
+    <div className="chat-container">
+      {/* Chat Messages */}
+      <div className="chat-messages">
+        {messages.length === 0 ? (
+          <p className="no-messages">
+            Start the conversation!<br />
+            <span style={{ fontSize: '14px', color: '#888' }}>Be the first to say hello 👋</span>
+          </p>
+        ) : (
+          messages.map((msg, idx) => {
+            const isCurrentUser = msg.sender === user.username;
+            return (
+              <div key={idx} className={`message-wrapper ${isCurrentUser ? "sent" : "received"}`}>
+                {!isCurrentUser && (
+                  <img
+                    className={`profile-pic ${isUserActive(msg.sender) ? "online" : "offline"}`}
+                    src={getProfilePicture(msg.sender) || "/default-avatar.png"}
+                    alt={`${msg.sender}'s profile`}
+                  />
                 )}
-                <div ref={messageEndRef} />
-            </div>
+                <div className="message-content">
+                  {!isCurrentUser && (
+                    <span className="sender-name">
+                      {msg.sender}
+                    </span>
+                  )}
+                  <div className="message-text">{msg.content}</div>
+                  <span className="timestamp">
+                    {formatTime(msg.timestamp)}
+                  </span>
+                </div>
+              </div>
+            );
+          })
+        )}
+        <div ref={messageEndRef} />
+      </div>
 
-            {/* Message Input */}
-            <div className="chat-input">
-                <input
-                    type="text"
-                    placeholder="Type your message..."
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                />
-                <button onClick={sendMessage}>Send</button>
-            </div>
-        </div>
-    );
+      {/* Message Input */}
+      <div className="chat-input">
+        <input
+          type="text"
+          placeholder="Type your message..."
+          value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+        />
+        <button onClick={sendMessage}>Send</button>
+      </div>
+    </div>
+  );
 };
 
 export default Chat;

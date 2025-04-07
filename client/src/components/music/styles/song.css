@@ -40,10 +40,10 @@
 
 .now-playing .uploader-avatar {
     position: absolute;
-    bottom: -5px;
-    right: -5px;
-    width: 45px;
-    height: 45px;
+    bottom: -4px;
+    left: -4px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     border: 2.5px solid rgb(242,160,61);
     background: white;

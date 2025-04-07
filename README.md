@@ -7,7 +7,12 @@
 ### 🌟 Why This Project?
 
 Have you ever wanted to share a song with someone and see their reaction in real-time as they listen? Text is great, but music hits deeper. This app was born out of the desire to make online interactions more emotional and genuine. Music is a universal language that can connect people like nothing else.
+---
+### 📸 Demo
 
+🎬 [Watch Demo on YouTube](https://www.youtube.com/watch?v=rTkOlnB8X5o)
+
+---
 ---
 
 ### 🌐 Live Demo
@@ -82,11 +87,7 @@ Have you ever wanted to share a song with someone and see their reaction in real
 
 ---
 
-### 📸 Screenshots
 
-> *(Add screenshots here — chat box, room code interface, song playing, etc.)*
-
----
 
 ### 🗃️ Future Plans
 

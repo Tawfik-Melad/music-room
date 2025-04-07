@@ -8,11 +8,10 @@
 
 Have you ever wanted to share a song with someone and see their reaction in real-time as they listen? Text is great, but music hits deeper. This app was born out of the desire to make online interactions more emotional and genuine. Music is a universal language that can connect people like nothing else.
 ---
-### 📸 Demo
+### 🎬 Project Demo
 
-🎬 [Watch Demo on YouTube](https://www.youtube.com/watch?v=rTkOlnB8X5o)
+https://github.com/user-attachments/assets/f9929943-fcc4-47aa-a869-cd9c9787f5ec
 
----
 ---
 
 ### 🌐 Live Demo

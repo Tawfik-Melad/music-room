@@ -36,7 +36,7 @@ def get_spotify_token():
         return spotify_token
 
     # Request a new token
-    credentials = f"{""}:{""}"
+    credentials = f"{"13670e2666e9462fa6368080a7b358e8"}:{"fd063ddd72f040e3a5aab8915541e782"}"
     encoded_credentials = base64.b64encode(credentials.encode()).decode()
 
     url = "https://accounts.spotify.com/api/token"

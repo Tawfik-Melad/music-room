@@ -1,6 +1,6 @@
-import React, { useState, useContext, useRef } from 'react';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import { MainContext } from '../contexts/contexts';
-import { FaCamera, FaMusic, FaUsers, FaHeart, FaClock } from 'react-icons/fa';
+import { FaCamera, FaUsers, FaClock } from 'react-icons/fa';
 import Navbar from '../components/common/navbar';
 import request from '../pre-request';
 import { ACCESS_TOKEN } from '../constants';
@@ -12,7 +12,22 @@ const Profile = () => {
     const [newUsername, setNewUsername] = useState('');
     const [profileImage, setProfileImage] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
+    const [joinedRooms, setJoinedRooms] = useState([]);
     const fileInputRef = useRef(null);
+
+    useEffect(() => {
+        const fetchJoinedRooms = async () => {
+            try {
+                const response = await request.get('/room/active-user-rooms/');
+                console.log('Joined rooms:', response.data);
+                setJoinedRooms(response.data);
+            } catch (error) {
+                console.error('Error fetching joined rooms:', error);
+            }
+        };
+
+        fetchJoinedRooms();
+    }, []);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -47,19 +62,34 @@ const Profile = () => {
                     }));
                     setPreviewImage(null);
                     setProfileImage(null);
-                } else {
-                    console.error('Error updating profile picture:', data.message);
                 }
-            } else {
-                const errorData = await response.json();
-                console.error('Error updating profile picture:', errorData.message);
             }
         } catch (error) {
             console.error('Error uploading image:', error);
         }
     };
 
-   
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const now = new Date();
+        
+        // Set both dates to start of day for accurate comparison
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const compareDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        
+        const diffTime = Math.abs(today - compareDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 0) return 'Today';
+        if (diffDays === 1) return 'Yesterday';
+        if (diffDays < 7) return `${diffDays} days ago`;
+        return date.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+        });
+    };
 
     return (
         <div>  
@@ -67,76 +97,72 @@ const Profile = () => {
             <div className="profile-page-container">
                 <div className="profile-page-header">
                     <div className="profile-page-image-container">
-                    <img 
-                        src={currentUser?.profile_picture || '/default-avatar.png'} 
-                        alt="Profile" 
-                        className="profile-page-image"
-                    />
-                    <div className="image-upload-overlay">
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleImageChange}
-                            accept="image/*"
-                            style={{ display: 'none' }}
+                        <img 
+                            src={currentUser?.profile_picture || '/default-avatar.png'} 
+                            alt="Profile" 
+                            className="profile-page-image"
                         />
-                        <button 
-                            className="upload-button"
-                            onClick={() => fileInputRef.current?.click()}
-                        >
-                            <FaCamera />
-                        </button>
+                        <div className="image-upload-overlay">
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleImageChange}
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                            />
+                            <button 
+                                className="upload-button"
+                                onClick={() => fileInputRef.current?.click()}
+                            >
+                                <FaCamera />
+                            </button>
+                        </div>
                     </div>
+                    {previewImage && (
+                        <button className="save-image-button" onClick={handleImageUpload}>
+                            Save New Image
+                        </button>
+                    )}
                 </div>
-                {previewImage && (
-                    <button className="save-image-button" onClick={handleImageUpload}>
-                        Save New Image
-                    </button>
-                )}
-            </div>
 
-            <div className="profile-page-content">
-                <div className="profile-page-username-section">
-
+                <div className="profile-page-content">
+                    <div className="profile-page-username-section">
                         <div className="profile-page-username-display">
                             <h1>{currentUser?.username}</h1>
                         </div>
-                    
-                </div>
+                        <div className="account-info">
+                            <p className="join-date">
+                                <FaClock className="clock-icon" />
+                                Member since {formatDate(currentUser?.joined_at)}
+                            </p>
+                        </div>
+                    </div>
 
-                <div className="profile-page-stats-section">
-                    <div className="profile-page-stat-card">
-                        <FaMusic className="profile-page-stat-icon" />
-                        <div className="profile-page-stat-info">
-                            <h3>Recent Rooms</h3>
-                            <p>Last joined: Room #1234</p>
-                        </div>
-                    </div>
-                    <div className="profile-page-stat-card">
-                        <FaUsers className="profile-page-stat-icon" />
-                        <div className="profile-page-stat-info">
-                            <h3>Friends</h3>
-                            <p>12 active friends</p>
-                        </div>
-                    </div>
-                    <div className="profile-page-stat-card">
-                        <FaHeart className="profile-page-stat-icon" />
-                        <div className="profile-page-stat-info">
-                            <h3>Likes</h3>
-                            <p>45 songs liked</p>
-                        </div>
-                    </div>
-                    <div className="profile-page-stat-card">
-                        <FaClock className="profile-page-stat-icon" />
-                        <div className="profile-page-stat-info">
-                            <h3>Listening Time</h3>
-                            <p>12 hours this week</p>
+                    <div className="joined-rooms-section">
+                        <h2>Your friends waiting you</h2>
+                        <div className="rooms-grid">
+                            {joinedRooms.map((room) => (
+                                <div key={`${room.room}-${room.user}`} className="room-card">
+                                    <div className="room-card-header">
+                                        <FaUsers className="room-icon" />
+                                        <span className="room-code">{room.room} <span className="room-host">Host: {room.user}</span></span>
+                                    </div>
+                                    <div className="room-card-content">
+                                        <p className="room-join-date">
+                                            <FaClock className="clock-icon" />
+                                            Joined {formatDate(room.joined_at)}
+                                        </p>
+                                        <p className="room-status">
+                                            Status: {room.connected ? 'Online' : 'Offline'}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
             </div>
-            </div>
-         </div>
+        </div>
     );
 };
 

@@ -64,3 +64,12 @@ class RoomMemberStatusView(generics.RetrieveAPIView):
         except RoomMember.DoesNotExist:
             # Return 404 if object not found
             raise Http404("RoomMember not found.")
+
+
+class ActiveUserRoomsView(generics.ListAPIView):
+    serializer_class = RoomMemberSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return RoomMember.objects.filter(user=self.request.user)
+

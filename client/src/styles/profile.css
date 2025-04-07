@@ -6,6 +6,33 @@
     background: #ffffff;
 }
 
+/* Account Info Section */
+.account-info {
+    text-align: center;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(242, 160, 61, 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.join-date {
+    color: #666;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.join-date .clock-icon {
+    color: #F2A03D;
+    font-size: 1rem;
+}
+
 .profile-page-header {
     display: flex;
     flex-direction: column;
@@ -229,6 +256,78 @@
     transition: color 0.3s ease;
 }
 
+/* Joined Rooms Section */
+.joined-rooms-section {
+    margin-top: 2rem;
+}
+
+.joined-rooms-section h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.room-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
+}
+
+.room-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.room-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.room-icon {
+    color: #4CAF50;
+    font-size: 1.2rem;
+}
+
+.room-code {
+    font-weight: bold;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.room-card-content {
+    color: #666;
+}
+
+.room-host {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.room-join-date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.clock-icon {
+    color: #4CAF50;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .profile-page-container {
@@ -247,4 +346,70 @@
     .profile-page-stats-section {
         grid-template-columns: 1fr;
     }
+
+    .rooms-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-page-image-container {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+.room-status {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.room-status::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #4CAF50;
+}
+
+.room-status.offline::before {
+    background-color: #666;
+}
+
+.profile-page-container .rooms-grid .room-card .room-card-header .room-code {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #ff8a00, #ff5e03);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(255, 138, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.profile-page-container .rooms-grid .room-card .room-card-header .room-code:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 138, 0, 0.3);
+}
+
+.profile-page-container .rooms-grid .room-card .room-card-header .room-host {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.profile-page-container .rooms-grid .room-card .room-card-header .room-host::before {
+    content: "👑";
+    margin-right: 6px;
+    font-size: 1.1em;
 } 

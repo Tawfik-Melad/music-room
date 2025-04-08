@@ -62,7 +62,7 @@ https://github.com/user-attachments/assets/f9929943-fcc4-47aa-a869-cd9c9787f5ec
 
 #### 🔥 Frontend
 - ReactJS + Vite for a lightning-fast frontend.
-- Socket.IO Client for seamless real-time updates.
+- WebSocket Client for seamless real-time updates.
 - Bootstrap for a sleek, responsive design (no Tailwind).
 - Custom notification system for real-time alerts.
 
